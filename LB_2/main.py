@@ -1,10 +1,9 @@
 # Python 3.7.4 (v3.7.4:e09359112e, Jul  8 2019, 14:54:52) 
 # [Clang 6.0 (clang-600.0.57)] on darwin
 # Type "help", "copyright", "credits" or "license" for more information.
-import os 
-
+import datetime as date 
 
 
 if __name__ == '__main__':
-    hello_string = ''
-    print('Here --> {}'.format(dir(os)))
+    hello_string = 'PyPSQL console 0.9(Based on Python 3.7.4) [{}]'.format(date.datetime.now())
+    print(hello_string)
