@@ -11,14 +11,20 @@ class User:
     name = None
     mail = None
     
+    # def __init__(self, name, mail=None) -> None:
+    #     if isinstance(name, str) and isinstance(mail, (str, None)):
+    #         self.user_id = ID['user_id']
+    #         ID['user_id'] += 1
+    #         self.name = name
+    #         self.mail = mail
+    #     else:
+    #         raise TypeError
+
     def __init__(self, name, mail=None) -> None:
-        if isinstance(name, str) and isinstance(mail, (str, None)):
-            self.user_id = ID['user_id']
-            ID['user_id'] += 1
-            self.name = name
-            self.mail = mail
-        else:
-            raise TypeError
+        print(self.__dict__)
+
+    def __str__(self):
+        return '<User object[{}]: {}|{}>'.format(self.user_id, self.name, self.mail)
 
 
 class Blog:
@@ -37,6 +43,13 @@ class Blog:
         else:
             raise TypeError
 
+    def __str__(self):
+        output = '<Blog object[{}]: ['.format(self.user_id)
+        output += ' name: "{}" |'.format(self.name)
+        output += ' description: "{}" |'.format(self.description)
+        output += ' '
+        return output
+
 
 class Article:
     article_id = None
@@ -54,6 +67,12 @@ class Article:
         else:
             raise TypeError
 
+    def __str__(self):
+        output = '<Article object[{}]: ['.format(self.article_id)
+        output += 'name: "{}" | '.format(self.name)
+        output += 'text: "{}" | '.format(self.text)
+        output += 'fk_blog_id: "{}">'.format(self.text)
+
 
 class Comment:
     comment_id = None
@@ -66,3 +85,10 @@ class Comment:
             ID['comment_id'] += 1
             self.text = text
             self.article_id = article_id
+
+
+if __name__ == '__main__':
+    user = User('Gav')
+    # blog = Blog(name='dogs', description='yess', user)
+    # blog = Article(name='Gav', text='gav gav gav', blog_id)
+    # print(blog)
