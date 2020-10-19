@@ -3,7 +3,7 @@ ID = {
     'blog_id': 0,
     'article_id': 0,
     'comment_id': 0
-}
+}         
 
 
 class User:
@@ -11,17 +11,14 @@ class User:
     name = None
     mail = None
     
-    # def __init__(self, name, mail=None) -> None:
-    #     if isinstance(name, str) and isinstance(mail, (str, None)):
-    #         self.user_id = ID['user_id']
-    #         ID['user_id'] += 1
-    #         self.name = name
-    #         self.mail = mail
-    #     else:
-    #         raise TypeError
-
     def __init__(self, name, mail=None) -> None:
-        print(self.__dict__)
+        if isinstance(name, str) and isinstance(mail, (str, type(None))):
+            self.user_id = ID['user_id']
+            ID['user_id'] += 1
+            self.name = name
+            self.mail = mail
+        else:
+            raise TypeError('Invalid User name or mail values')
 
     def __str__(self):
         return '<User object[{}]: {}|{}>'.format(self.user_id, self.name, self.mail)
@@ -41,13 +38,13 @@ class Blog:
             self.description = description
             self.user_id = user_id
         else:
-            raise TypeError
+            raise TypeError('Invalid Blog name, description or user_id values')
 
     def __str__(self):
         output = '<Blog object[{}]: ['.format(self.user_id)
         output += ' name: "{}" |'.format(self.name)
         output += ' description: "{}" |'.format(self.description)
-        output += ' '
+        output += ' ' # TODO: !!!
         return output
 
 
@@ -65,7 +62,7 @@ class Article:
             self.text = text
             self.blog_id = blog_id
         else:
-            raise TypeError
+            raise TypeError('Invalid Article name, text or blog_id values')
 
     def __str__(self):
         output = '<Article object[{}]: ['.format(self.article_id)
@@ -88,7 +85,4 @@ class Comment:
 
 
 if __name__ == '__main__':
-    user = User('Gav')
-    # blog = Blog(name='dogs', description='yess', user)
-    # blog = Article(name='Gav', text='gav gav gav', blog_id)
-    # print(blog)
+    pass
