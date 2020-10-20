@@ -9,7 +9,7 @@ import datetime as date
 import psycopg2 as psql
 
 
-print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' % {'date': str(date.datetime.now())[:-7]})
+print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' % {'date': str(date.datetime.now())[:-10]})
 # try:
 #     connection = psql.connect(
 #         database=db_settings['database'], 
@@ -24,11 +24,10 @@ print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' % {'date': str(dat
 #     flag = False
 # print('Connecting to DB: %(status)s' % {'status': 'SUCCESS' if flag else 'FAILED'})
 
-from mvc.controller import Controller, User
+from mvc.controller import Controller
+from mvc.model import User, Blog, Article, Comment
 
 var = Controller()
 var.show_items(
     table_name='User',
 )
-
-

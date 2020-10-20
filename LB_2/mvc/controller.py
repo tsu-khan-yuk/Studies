@@ -1,16 +1,27 @@
 from mvc.local import db_settings
-from mvc.model import User, Blog, Article, Comment, STRUCTURE
+from mvc.model import User, Blog, Article, Comment
 import psycopg2 as psql
 
 
 STRINGS = {
     'output': {
-        'User': [
-            '%(id)s | %(user)17s | %(mail)s',
-            ['id', 'user', 'mail']
-        ]
+        'User': ' %(id)s | %(user)17s | %(mail)s',
+        'Blog': ' %(id)s | %(name)s | %(description)s | %(fk_user_id)s',
+        'Article': ' %(id)s | %(name)s | %(text)s | %(fk_blog_id)s',
+        'Comment': ' %(id)s | %(text)s | %(fk_article_id)s'
     }
 }
+
+def string_to_type(model_name: str):
+
+    if model_name == 'User':
+        return User
+    elif model_name == 'Blog':
+        return Blog
+    elif model_name == 'Article':
+        return Article
+    elif model_name == 'Comment':
+        return Comment
 
 
 class Controller:
@@ -38,12 +49,16 @@ class Controller:
         else:
             raise Exception('DB not found')
 
+    def output_dict_formating(self) -> dict:
+        # TODO: returns dict for print
+        pass
+
     def show_items(self, table_name: str) -> None:
-        if table_name in STRUCTURE.keys():
+        if table_name in {'User', 'Blog', 'Article', 'Comment'}:
             self.db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
             # TODO: rewrite for other models !!!
             for i in self.db.fetchall():
-                print('%(id)s | %(user)16s | %(mail)s' % {
+                print(STRINGS['output'][table_name] % {
                     'id': i[0],
                     'user': i[1],
                     'mail': i[2]
@@ -52,7 +67,7 @@ class Controller:
             raise TypeError('Invalid table_name')
 
     def show_item(self, table: str, field: str, condition: str) -> None:
-        if table in STRUCTURE.keys() and field in STRUCTURE[table]:
+        if table in {'User', 'Blog', 'Article', 'Comment'} and field in string_to_type(table).fields():
             self.db.execute(
                 'SELECT * FROM "%(table)s" WHERE %(condition)s' % 
                 {
@@ -62,12 +77,14 @@ class Controller:
                 }    
             )
             # TODO: rewrite for other models !!!
-            item = self.db.fetchall()
-            print(STRINGS['output'][table] % {
-                'id': item[0][0],
-                'user': item[0][1],
-                'mail': item[0][2]
-            })
+            items = self.db.fetchall()
+
+            for i in items:
+                print(STRINGS['output'][table] % {
+                    'id': i[0],
+                    'user': i[1],
+                    'mail': i[2]
+                })
 
     def insert_item(self, name, price, quantity):
         pass

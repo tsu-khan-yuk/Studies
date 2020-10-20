@@ -6,30 +6,30 @@ ID = {
 }    
 
 
-STRUCTURE = {
-        'User': {
-            'user_id',
-            'name',
-            'mail'
-        },
-        'Blog': {
-            'blog_id',
-            'name',
-            'description',
-            'user_id'
-        },
-        'Article': {
-            'article_id',
-            'name',
-            'text',
-            'blog_id'
-        },
-        'Comment': {
-            'comment_id',
-            'text',
-            'article_id'
-        }
-    }
+# STRUCTURE = {
+#         'User': {
+#             'user_id',
+#             'name',
+#             'mail'
+#         },
+#         'Blog': {
+#             'blog_id',
+#             'name',
+#             'description',
+#             'user_id'
+#         },
+#         'Article': {
+#             'article_id',
+#             'name',
+#             'text',
+#             'blog_id'
+#         },
+#         'Comment': {
+#         'comment_id',
+#         'text',
+#         'article_id'
+#     }
+# }
 
 
 class User:
@@ -45,6 +45,10 @@ class User:
             self.mail = mail
         else:
             raise TypeError('Invalid User name or mail values')
+
+    @staticmethod
+    def fields():
+        return ('user_id', 'name', 'mail')
     
     @staticmethod
     def model_type():
@@ -69,6 +73,10 @@ class Blog:
             self.user_id = user_id
         else:
             raise TypeError('Invalid Blog name, description or user_id values')
+
+    @staticmethod
+    def fields():
+        return ('blog_id', 'name', 'description', 'user_id')
 
     @staticmethod
     def model_type():
@@ -99,6 +107,10 @@ class Article:
             raise TypeError('Invalid Article name, text or blog_id values')
 
     @staticmethod
+    def fields():
+        return ('article_id', 'name', 'text', 'blog_id')
+
+    @staticmethod
     def model_type():
         return 'Article'
 
@@ -120,6 +132,10 @@ class Comment:
             ID['comment_id'] += 1
             self.text = text
             self.article_id = article_id
+
+    @staticmethod
+    def fields():
+        return ('comment_id', 'text', 'article_id')
 
     @staticmethod
     def model_type():
