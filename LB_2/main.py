@@ -29,5 +29,5 @@ from mvc.model import User, Blog, Article, Comment
 
 var = Controller()
 var.show_items(
-    table_name='User',
+    table_name='Article',
 )

@@ -5,10 +5,10 @@ import psycopg2 as psql
 
 STRINGS = {
     'output': {
-        'User': ' %(id)s | %(user)17s | %(mail)s',
-        'Blog': ' %(id)s | %(name)s | %(description)s | %(fk_user_id)s',
-        'Article': ' %(id)s | %(name)s | %(text)s | %(fk_blog_id)s',
-        'Comment': ' %(id)s | %(text)s | %(fk_article_id)s'
+        'User': ' %(user_id)s | %(name)17s | %(mail)s',
+        'Blog': ' %(blog_id)s | %(name)s | %(description)s | %(user_id)s',
+        'Article': ' %(article_id)s | %(name)s | %(text)s | %(blog_id)s',
+        'Comment': ' %(comment_id)s | %(text)s | %(article_id)s'
     }
 }
 
@@ -49,20 +49,24 @@ class Controller:
         else:
             raise Exception('DB not found')
 
-    def output_dict_formating(self) -> dict:
-        # TODO: returns dict for print
-        pass
+    def output_dict_formating(self, table: str, values: tuple) -> str:
+        fields = string_to_type(table).fields()
+        j = 0
+        ret = dict()
+        for i in fields:
+            ret[i] = values[j]
+            j += 1
+        return STRINGS['output'][table] % ret
 
     def show_items(self, table_name: str) -> None:
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
             self.db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
-            # TODO: rewrite for other models !!!
-            for i in self.db.fetchall():
-                print(STRINGS['output'][table_name] % {
-                    'id': i[0],
-                    'user': i[1],
-                    'mail': i[2]
-                })
+            data = self.db.fetchall()
+            if not data:
+                print('Table is empty')
+                return None
+            for i in data:
+                print(self.output_dict_formating(table_name, i))
         else:
             raise TypeError('Invalid table_name')
 
@@ -76,7 +80,6 @@ class Controller:
                 'condition': condition
                 }    
             )
-            # TODO: rewrite for other models !!!
             items = self.db.fetchall()
 
             for i in items:
