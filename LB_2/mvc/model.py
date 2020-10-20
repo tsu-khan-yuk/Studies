@@ -3,7 +3,33 @@ ID = {
     'blog_id': 0,
     'article_id': 0,
     'comment_id': 0
-}         
+}    
+
+
+STRUCTURE = {
+        'User': {
+            'user_id',
+            'name',
+            'mail'
+        },
+        'Blog': {
+            'blog_id',
+            'name',
+            'description',
+            'user_id'
+        },
+        'Article': {
+            'article_id',
+            'name',
+            'text',
+            'blog_id'
+        },
+        'Comment': {
+            'comment_id',
+            'text',
+            'article_id'
+        }
+    }
 
 
 class User:
@@ -19,6 +45,10 @@ class User:
             self.mail = mail
         else:
             raise TypeError('Invalid User name or mail values')
+    
+    @staticmethod
+    def model_type():
+        return 'User'
 
     def __str__(self):
         return '<User object[{}]: {}|{}>'.format(self.user_id, self.name, self.mail)
@@ -39,6 +69,10 @@ class Blog:
             self.user_id = user_id
         else:
             raise TypeError('Invalid Blog name, description or user_id values')
+
+    @staticmethod
+    def model_type():
+        return 'Blog'
 
     def __str__(self):
         output = '<Blog object[{}]: ['.format(self.user_id)
@@ -64,6 +98,10 @@ class Article:
         else:
             raise TypeError('Invalid Article name, text or blog_id values')
 
+    @staticmethod
+    def model_type():
+        return 'Article'
+
     def __str__(self):
         output = '<Article object[{}]: ['.format(self.article_id)
         output += 'name: "{}" | '.format(self.name)
@@ -83,6 +121,12 @@ class Comment:
             self.text = text
             self.article_id = article_id
 
+    @staticmethod
+    def model_type():
+        return 'Comment'
+
 
 if __name__ == '__main__':
     pass
+
+
