@@ -1,46 +1,23 @@
-# STRUCTURE = {
-#         'User': {
-#             'user_id',
-#             'name',
-#             'mail'
-#         },
-#         'Blog': {
-#             'blog_id',
-#             'name',
-#             'description',
-#             'user_id'
-#         },
-#         'Article': {
-#             'article_id',
-#             'name',
-#             'text',
-#             'blog_id'
-#         },
-#         'Comment': {
-#         'comment_id',
-#         'text',
-#         'article_id'
-#     }
-# }
-
-
 class User:
     user_id = None
     name = None
     mail = None
     
-    def __init__(self, id=None, name=None, mail=None) -> None:
-        self.user_id = id
-        self.name = name
-        self.mail = mail
+    def __init__(self, id: int, name: str, mail: str) -> None:
+        if isinstance(id, int) and isinstance(name, str) and isinstance(mail, str):
+            self.user_id = id
+            self.name = name
+            self.mail = mail
+        else:
+            raise TypeError('Invalid User field type')
 
     @staticmethod
     def fields():
         return ('user_id', 'name', 'mail')
-    
+
     @staticmethod
-    def model_type():
-        return 'User'
+    def creating_from_tuple(values: tuple):
+        return User(values[0], values[1], values[2])
 
     def __str__(self):
         return '<User object[{}]: {}|{}>'.format(self.user_id, self.name, self.mail)
@@ -52,8 +29,9 @@ class Blog:
     description = None
     user_id = None
 
-    def __init__(self, id, name, description, user_id) -> None:
-        if isinstance(name, str) and isinstance(description, str) and isinstance(user_id,(int, User)):
+    def __init__(self, id: int, name: str, description: str, user_id) -> None:
+        if isinstance(id, int) and isinstance(name, str) and \
+            isinstance(description, str) and isinstance(user_id,(int, User)):
             self.blog_id = id
             self.name = name
             self.description = description
@@ -66,8 +44,8 @@ class Blog:
         return ('blog_id', 'name', 'description', 'user_id')
 
     @staticmethod
-    def model_type():
-        return 'Blog'
+    def creating_from_tuple(values: tuple):
+        return Blog(values[0], values[1], values[2], values[3])
 
     def __str__(self):
         output = '<Blog object[{}]: ['.format(self.user_id)
@@ -83,8 +61,9 @@ class Article:
     text = None
     blog_id = None
 
-    def __init__(self, id, name, text, blog_id) -> None:
-        if isinstance(name, str) and isinstance(text, str) and isinstance(blog_id, (int, Blog)):
+    def __init__(self, id: int, name: str, text: str, blog_id) -> None:
+        if isinstance(id, int) and isinstance(name, str) and \
+            isinstance(text, str) and isinstance(blog_id, (int, Blog)):
             self.article_id = id
             self.name = name
             self.text = text
@@ -97,8 +76,8 @@ class Article:
         return ('article_id', 'name', 'text', 'blog_id')
 
     @staticmethod
-    def model_type():
-        return 'Article'
+    def creating_from_tuple(values: tuple):
+        return Article(values[0], values[1], values[2], values[3])
 
     def __str__(self):
         output = '<Article object[{}]: ['.format(self.article_id)
@@ -112,8 +91,9 @@ class Comment:
     text = None
     article_id = None
 
-    def __init__(self, id, text, article_id) -> None:
-        if isinstance(text, str) and isinstance(article_id, (int, Article)):
+    def __init__(self, id: int, text: str, article_id) -> None:
+        if isinstance(id, int) and isinstance(text, str) and \
+            isinstance(article_id, (int, Article)):
             self.comment_id = id
             self.text = text
             self.article_id = article_id
@@ -123,11 +103,5 @@ class Comment:
         return ('comment_id', 'text', 'article_id')
 
     @staticmethod
-    def model_type():
-        return 'Comment'
-
-
-if __name__ == '__main__':
-    pass
-
-
+    def creating_from_tuple(values: tuple):
+        return Comment(values[0], values[1], values[2])

@@ -73,10 +73,8 @@ class Controller:
             buffer = list()
             table_type = string_to_type(table_name)
             for i in data:
-                object = table_type()
-                # TODO: formating tuple to object
-                buffer.append(object)
-
+                buffer.append(table_type.creating_from_tuple(i))
+            return buffer
         else:
             raise TypeError('Invalid table_name')
 
