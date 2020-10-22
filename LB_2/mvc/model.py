@@ -1,11 +1,3 @@
-ID = {
-    'user_id': 0,
-    'blog_id': 0,
-    'article_id': 0,
-    'comment_id': 0
-}    
-
-
 # STRUCTURE = {
 #         'User': {
 #             'user_id',
@@ -37,14 +29,10 @@ class User:
     name = None
     mail = None
     
-    def __init__(self, name, mail=None) -> None:
-        if isinstance(name, str) and isinstance(mail, (str, type(None))):
-            self.user_id = ID['user_id']
-            ID['user_id'] += 1
-            self.name = name
-            self.mail = mail
-        else:
-            raise TypeError('Invalid User name or mail values')
+    def __init__(self, id=None, name=None, mail=None) -> None:
+        self.user_id = id
+        self.name = name
+        self.mail = mail
 
     @staticmethod
     def fields():
@@ -64,10 +52,9 @@ class Blog:
     description = None
     user_id = None
 
-    def __init__(self, name, description, user_id) -> None:
+    def __init__(self, id, name, description, user_id) -> None:
         if isinstance(name, str) and isinstance(description, str) and isinstance(user_id,(int, User)):
-            self.blog_id = ID['blog_id']
-            ID['blog_id'] += 1
+            self.blog_id = id
             self.name = name
             self.description = description
             self.user_id = user_id
@@ -96,10 +83,9 @@ class Article:
     text = None
     blog_id = None
 
-    def __init__(self, name, text, blog_id) -> None:
+    def __init__(self, id, name, text, blog_id) -> None:
         if isinstance(name, str) and isinstance(text, str) and isinstance(blog_id, (int, Blog)):
-            self.article_id = ID['article_id']
-            ID['article_id'] += 1
+            self.article_id = id
             self.name = name
             self.text = text
             self.blog_id = blog_id
@@ -126,10 +112,9 @@ class Comment:
     text = None
     article_id = None
 
-    def __init__(self, text, article_id) -> None:
+    def __init__(self, id, text, article_id) -> None:
         if isinstance(text, str) and isinstance(article_id, (int, Article)):
-            self.comment_id = ID['comment_id']
-            ID['comment_id'] += 1
+            self.comment_id = id
             self.text = text
             self.article_id = article_id
 

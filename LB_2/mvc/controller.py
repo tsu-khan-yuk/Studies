@@ -25,20 +25,19 @@ def string_to_type(model_name: str):
 
 
 class Controller:
-    db_connection = None
-    db = None
+    __db_connection = None
+    __db = None
     
     def __init__(self) -> None:
-        self.set_cursor()
+        self.__set_cursor()
 
     def __del__(self) -> None:
-        self.db.close()
-        self.db_connection.close()
-        # TODO: дописать
+        self.__db.close()
+        self.__db_connection.close()
 
-    def set_cursor(self) -> None:
+    def __set_cursor(self) -> None:
         try:
-            self.connection = psql.connect(
+            self.__db_connection = psql.connect(
                 database=db_settings['database'], 
                 user=db_settings['user'],
                 password=db_settings['password'], 
@@ -47,15 +46,13 @@ class Controller:
             )
             flag = True
         except Exception as ex:
-            self.connection = None
+            self.__db_connection = None
             flag = False
 
         if flag:
-            self.db = self.connection.cursor()
+            self.__db = self.__db_connection.cursor()
         else:
             raise Exception('DB not found')
-
-    # def get_items(self, )
 
     def output_dict_formating(self, table: str, values: tuple) -> str:
         fields = string_to_type(table).fields()
@@ -66,29 +63,33 @@ class Controller:
             j += 1
         return STRINGS['output'][table] % fields_values
 
-    def show_items(self, table_name: str) -> None:
+    def get_table_items(self, table_name: str) -> None:
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
-            self.db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
-            data = self.db.fetchall()
+            self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
+            data = self.__db.fetchall()
             if not data:
                 print('Table is empty')
-                return None
+                return 
+            buffer = list()
+            table_type = string_to_type(table_name)
             for i in data:
-                print(self.output_dict_formating(table_name, i))
+                object = table_type()
+                # TODO: formating tuple to object
+                buffer.append(object)
+
         else:
             raise TypeError('Invalid table_name')
 
     def show_item(self, table: str, field: str, condition: str) -> None:
-        if table in {'User', 'Blog', 'Article', 'Comment'} and field in string_to_type(table).fields():
-            self.db.execute(
+        if table in {'User', 'Blog', 'Article', 'Comment'}:
+            self.__db.execute(
                 'SELECT * FROM "%(table)s" WHERE %(condition)s' % 
                 {
                 'table': table,
-                'field': field,
                 'condition': condition
                 }    
             )
-            data = self.db.fetchall()
+            data = self.__db.fetchall()
             if not data:
                 print('Table is empty')
                 return None
