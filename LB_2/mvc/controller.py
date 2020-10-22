@@ -25,14 +25,20 @@ def string_to_type(model_name: str):
 
 
 class Controller:
+    db_connection = None
     db = None
     
     def __init__(self) -> None:
         self.set_cursor()
 
+    def __del__(self) -> None:
+        self.db.close()
+        self.db_connection.close()
+        # TODO: дописать
+
     def set_cursor(self) -> None:
         try:
-            connection = psql.connect(
+            self.connection = psql.connect(
                 database=db_settings['database'], 
                 user=db_settings['user'],
                 password=db_settings['password'], 
@@ -41,22 +47,24 @@ class Controller:
             )
             flag = True
         except Exception as ex:
-            connection = None
+            self.connection = None
             flag = False
 
         if flag:
-            self.db = connection.cursor()
+            self.db = self.connection.cursor()
         else:
             raise Exception('DB not found')
+
+    # def get_items(self, )
 
     def output_dict_formating(self, table: str, values: tuple) -> str:
         fields = string_to_type(table).fields()
         j = 0
-        ret = dict()
+        fields_values = dict()
         for i in fields:
-            ret[i] = values[j]
+            fields_values[i] = values[j]
             j += 1
-        return STRINGS['output'][table] % ret
+        return STRINGS['output'][table] % fields_values
 
     def show_items(self, table_name: str) -> None:
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
@@ -80,14 +88,12 @@ class Controller:
                 'condition': condition
                 }    
             )
-            items = self.db.fetchall()
-
-            for i in items:
-                print(STRINGS['output'][table] % {
-                    'id': i[0],
-                    'user': i[1],
-                    'mail': i[2]
-                })
+            data = self.db.fetchall()
+            if not data:
+                print('Table is empty')
+                return None
+            for i in data:
+                print(self.output_dict_formating(table, i))
 
     def insert_item(self, name, price, quantity):
         pass

@@ -28,6 +28,8 @@ from mvc.controller import Controller
 from mvc.model import User, Blog, Article, Comment
 
 var = Controller()
-var.show_items(
-    table_name='Article',
+var.show_item(
+    table='User',
+    field='user_id',
+    condition='"user_id" = 2'
 )
