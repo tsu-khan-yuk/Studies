@@ -13,6 +13,6 @@ from mvc.model import User, Blog, Article, Comment
 print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' % {'date': str(date.datetime.now())[:-10]})
 
 var = Controller()
-buf = var.get_table_items(table_name='User')
+buf = var.get_all_table_items(table_name='User')
 for i in buf:
     print(i)

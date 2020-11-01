@@ -3,7 +3,7 @@ from mvc.model import User, Blog, Article, Comment
 import psycopg2 as psql
 
 
-STRINGS = {
+STRING_TEMPLATE = {
     'output': {
         'User': ' %(user_id)s | %(name)17s | %(mail)s',
         'Blog': ' %(blog_id)s | %(name)s | %(description)s | %(user_id)s',
@@ -61,9 +61,9 @@ class Controller:
         for i in fields:
             fields_values[i] = values[j]
             j += 1
-        return STRINGS['output'][table] % fields_values
+        return STRING_TEMPLATE['output'][table] % fields_values
 
-    def get_table_items(self, table_name: str) -> None:
+    def get_all_table_items(self, table_name: str) -> None:
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
             self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
             data = self.__db.fetchall()
