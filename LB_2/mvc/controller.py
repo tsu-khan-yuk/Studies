@@ -27,7 +27,7 @@ def string_to_type(model_name: str):
 class Controller:
     __db_connection = None
     __db = None
-    
+
     def __init__(self) -> None:
         self.__set_cursor()
 
@@ -38,10 +38,10 @@ class Controller:
     def __set_cursor(self) -> None:
         try:
             self.__db_connection = psql.connect(
-                database=db_settings['database'], 
+                database=db_settings['database'],
                 user=db_settings['user'],
-                password=db_settings['password'], 
-                host=db_settings['host'], 
+                password=db_settings['password'],
+                host=db_settings['host'],
                 port=db_settings['port']
             )
             flag = True
@@ -65,11 +65,12 @@ class Controller:
 
     def get_all_table_items(self, table_name: str) -> None:
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
+            # # TODO: try/except
             self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
             data = self.__db.fetchall()
             if not data:
                 print('Table is empty')
-                return 
+                return
             buffer = list()
             table_type = string_to_type(table_name)
             for i in data:
@@ -81,19 +82,21 @@ class Controller:
     def show_item(self, table: str, field: str, condition: str) -> None:
         if table in {'User', 'Blog', 'Article', 'Comment'}:
             self.__db.execute(
-                'SELECT * FROM "%(table)s" WHERE %(condition)s' % 
+                'SELECT * FROM "%(table)s" WHERE %(condition)s' %
                 {
                 'table': table,
                 'condition': condition
-                }    
+                }
             )
             data = self.__db.fetchall()
             if not data:
-                print('Table is empty')
-                return None
+                print('Not found')
+                return
+            buffer = list()
             for i in data:
-                print(self.output_dict_formating(table, i))
-
+                buffer.append(table_type.creating_from_tuple(i))
+            return buffer
+            
     def insert_item(self, name, price, quantity):
         pass
 

@@ -6,6 +6,7 @@
 """
 import datetime as date
 from mvc.controller import Controller
+from mvc.view import View
 from mvc.model import User, Blog, Article, Comment
 
 
@@ -23,6 +24,7 @@ class MainConsole:
         DELETE model:
     """
     ctrl = Controller()
+    view = View()
 
     def __init__(self):
         print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' % {'date': str(date.datetime.now())[:-10]})
@@ -36,11 +38,14 @@ class MainConsole:
         cmd_name = cmd_name.split()
         print(cmd_name)
         if cmd_name[0] == 'show':
-            self.table_getter(cmd_name[1])
+            if cmd_name[2] == 'table':
+                self.table_getter(cmd_name[1])
 
-    def table_getter(self, table_name: str):
-        for i in self.ctrl.get_all_table_items(table_name):
-            print(i)
+    def table_getter(self, table_name: str, specific: str):
+        if 'where' in specific:
+            pass
+        elif specific == 'table':
+            pass
 
 
 if __name__ == '__main__':
