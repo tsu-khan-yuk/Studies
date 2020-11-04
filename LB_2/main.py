@@ -33,12 +33,16 @@ class MainConsole:
         hello_string += '| "create" commmand to create item            |\n'
         hello_string += '| "get" commmand to get item from table       |\n'
         hello_string += '| "delete" commmand to delete item from table |\n'
+        hello_string += '| "quit" commmand to quit                     |\n'
+        hello_string += '| "help" commmand to show this box            |\n'
         hello_string += '+ ------------------------------------------- +'
         print(hello_string)
         while True:
             input_string = input('>>> ')
             if input_string == 'quit':
                 break
+            elif input_string == 'help':
+                print(hello_string)
             elif input_string in {'create', 'delete', 'get'}:
                 self.command_manager(input_string)
             else:
@@ -53,17 +57,24 @@ class MainConsole:
             self.deleting_commands()
 
     def getter_commands(self):
-        rules = '+ ---------------------- +\n'
-        rules += '| "table" to see table   |\n'
-        rules += '| "item" to search items |\n'
-        rules += '+ ---------------------- +'
+        rules = '+ ----------------------------------- +\n'
+        rules += '| "table" to see table                |\n'
+        rules += '| "item" to search items              |\n'
+        rules += '| "help" commmand to show this box    |\n'
+        rules += '| "cancel" commmand to go back        |\n'
+        rules += '+ ----------------------------------- +'
         print(rules)
         while True:
             string = input('>>> ')
-            if string == 'menu':
+            if string == 'cancel':
                 return
+            elif string == 'help':
+                print(rules)
             elif string == 'table':
-                self.view.table_output()
+                print('Chose table: User, Blog, Article, Comment')
+                while True:
+                    
+                    self.view.table_output(self.ctrl.get_all_table_items())
 
     def creating_commands(self):
         pass

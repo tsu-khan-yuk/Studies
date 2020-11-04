@@ -63,7 +63,7 @@ class Controller:
             j += 1
         return STRING_TEMPLATE['output'][table] % fields_values
 
-    def get_all_table_items(self, table_name: str) -> None:
+    def get_all_table_items(self, table_name: str):
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
             self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
             data = self.__db.fetchall()
@@ -76,7 +76,7 @@ class Controller:
                 buffer.append(table_type.creating_from_tuple(i))
             return buffer
         else:
-            raise TypeError('Invalid table_name')
+            raise TypeError('SyntaxError: Invalid table_name')
 
     def show_item(self, table: str, condition: str) -> None:
         if table in {'User', 'Blog', 'Article', 'Comment'}:
