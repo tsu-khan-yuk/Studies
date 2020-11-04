@@ -65,7 +65,6 @@ class Controller:
 
     def get_all_table_items(self, table_name: str) -> None:
         if table_name in {'User', 'Blog', 'Article', 'Comment'}:
-            # # TODO: try/except
             self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
             data = self.__db.fetchall()
             if not data:
@@ -79,7 +78,7 @@ class Controller:
         else:
             raise TypeError('Invalid table_name')
 
-    def show_item(self, table: str, field: str, condition: str) -> None:
+    def show_item(self, table: str, condition: str) -> None:
         if table in {'User', 'Blog', 'Article', 'Comment'}:
             self.__db.execute(
                 'SELECT * FROM "%(table)s" WHERE %(condition)s' %
@@ -96,7 +95,7 @@ class Controller:
             for i in data:
                 buffer.append(table_type.creating_from_tuple(i))
             return buffer
-            
+
     def insert_item(self, name, price, quantity):
         pass
 
