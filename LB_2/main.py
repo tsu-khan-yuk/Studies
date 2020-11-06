@@ -11,18 +11,6 @@ from mvc.model import User, Blog, Article, Comment
 
 
 class MainConsole:
-    """
-    Commands:
-        CREATE model:
-            'create User(id, name, mail)',
-            'create Blog(id, name, description, user_id)',
-            'create Article(id, name, text, blog_id)',
-            'create Comment(id, text, article_id)'
-        GET model:
-            'show User table',
-            ...
-        DELETE model:
-    """
     ctrl = Controller()
     view = View()
 
@@ -38,7 +26,7 @@ class MainConsole:
         hello_string += '+ ------------------------------------------- +'
         print(hello_string)
         while True:
-            input_string = input('>>> ')
+            input_string = input('/ >>> ')
             if input_string == 'quit':
                 break
             elif input_string == 'help':
@@ -65,7 +53,7 @@ class MainConsole:
         rules += '+ ----------------------------------- +'
         print(rules)
         while True:
-            string = input('>>> ')
+            string = input('/get/ >>> ')
             if string == 'cancel':
                 return
             elif string == 'help':
@@ -73,19 +61,48 @@ class MainConsole:
             elif string == 'table':
                 print('Chose table: User, Blog, Article, Comment')
                 while True:
-                    table_name = input('>>> ')
+                    table_name = input('/get/table/ >>> ')
                     if table_name in {'User', 'Blog', 'Article', 'Comment'}:
-                        self.view.table_output(self.ctrl.get_all_table_items(table_name))
+                        self.view.table_output(table_name, self.ctrl)
                     elif table_name == 'cancel':
                         break
                     else:
                         print('Invalid table_name')
+            elif string == 'item':
+                pass
 
     def creating_commands(self):
-        pass
+        rules = '+ ----------------------------------- +\n'
+        rules += '| "help" commmand to show this box    |\n'
+        rules += '| "cancel" commmand to go back        |\n'
+        rules += '+ ----------------------------------- +\n'
+        rules += 'Chose table: User, Blog, Article, Comment'
+        print(rules)
+        while True:
+            string = input('/create/ >>> ')
+            if string == 'cancel':
+                return
+            elif string == 'help':
+                print(rules)
+            elif string in {'User', 'Blog', 'Article', 'Comment'}:
+                pass
 
     def deleting_commands(self):
-        pass
+        rules = '+ ----------------------------------- +\n'
+        rules += '| "item" to search items              |\n'
+        rules += '| "help" commmand to show this box    |\n'
+        rules += '| "cancel" commmand to go back        |\n'
+        rules += '+ ----------------------------------- +'
+        rules += 'Chose table: User, Blog, Article, Comment'
+        print(rules)
+        while True:
+            string = input('/delete/ >>> ')
+            if string == 'cancel':
+                return
+            elif string == 'help':
+                print(rules)
+            elif string in {'User', 'Blog', 'Article', 'Comment'}:
+                pass
 
 
 if __name__ == '__main__':

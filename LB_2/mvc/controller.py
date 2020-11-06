@@ -2,16 +2,6 @@ from mvc.local import db_settings
 from mvc.model import User, Blog, Article, Comment
 import psycopg2 as psql
 
-
-STRING_TEMPLATE = {
-    'output': {
-        'User': ' %(user_id)s | %(name)17s | %(mail)s',
-        'Blog': ' %(blog_id)s | %(name)s | %(description)s | %(user_id)s',
-        'Article': ' %(article_id)s | %(name)s | %(text)s | %(blog_id)s',
-        'Comment': ' %(comment_id)s | %(text)s | %(article_id)s'
-    }
-}
-
 def string_to_type(model_name: str):
 
     if model_name == 'User':
@@ -54,29 +44,18 @@ class Controller:
         else:
             raise Exception('DB not found')
 
-    def output_dict_formating(self, table: str, values: tuple) -> str:
-        fields = string_to_type(table).fields()
-        j = 0
-        fields_values = dict()
-        for i in fields:
-            fields_values[i] = values[j]
-            j += 1
-        return STRING_TEMPLATE['output'][table] % fields_values
-
     def get_all_table_items(self, table_name: str):
-        if table_name in {'User', 'Blog', 'Article', 'Comment'}:
-            self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
-            data = self.__db.fetchall()
-            if not data:
-                print('Table is empty')
-                return
-            buffer = list()
-            table_type = string_to_type(table_name)
-            for i in data:
-                buffer.append(table_type.creating_from_tuple(i))
-            return buffer
-        else:
-            raise TypeError('SyntaxError: Invalid table_name')
+        # # TODO: check for empty table
+        self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
+        data = self.__db.fetchall()
+        if not data:
+            print('Table is empty')
+            return
+        buffer = list()
+        table_type = string_to_type(table_name)
+        for i in data:
+            buffer.append(table_type.creating_from_tuple(i))
+        return buffer
 
     def show_item(self, table: str, condition: str) -> None:
         if table in {'User', 'Blog', 'Article', 'Comment'}:
