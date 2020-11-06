@@ -1,6 +1,8 @@
 from mvc.local import db_settings
 from mvc.model import User, Blog, Article, Comment
+from re import sub
 import psycopg2 as psql
+
 
 def string_to_type(model_name: str):
 
@@ -58,31 +60,40 @@ class Controller:
         return buffer
 
     def show_item(self, table: str, condition: str) -> None:
-        if table in {'User', 'Blog', 'Article', 'Comment'}:
-            self.__db.execute(
-                'SELECT * FROM "%(table)s" WHERE %(condition)s' %
-                {
-                'table': table,
-                'condition': condition
-                }
-            )
-            data = self.__db.fetchall()
-            if not data:
-                print('Not found')
-                return
-            buffer = list()
-            for i in data:
-                buffer.append(table_type.creating_from_tuple(i))
-            return buffer
+        self.__db.execute(
+            'SELECT * FROM "%(table)s" WHERE %(condition)s' %
+            {
+            'table': table,
+            'condition': condition
+            }
+        )
+        data = self.__db.fetchall()
+        if not data:
+            print('Not found')
+            return
+        buffer = list()
+        for i in data:
+            buffer.append(table_type.creating_from_tuple(i))
+        return buffer
 
-    def insert_item(self, name, price, quantity):
-        pass
+    def insert_item(self, table_name, data):
+        data_dict = dict()
+        for field in string_to_type(table_name).fields():
+            data_dict[field] = input('>>> Input {}: '.format(field))
+        fields = tuple(data_dict.keys())
+        values = tuple(data_dict.values())
 
-    def update_item(self, name, price, quantity):
-        pass
+        fields = sub("'", '"', str(fields))
 
-    def update_item_type(self, new_item_type):
-        pass
+        # # TODO: add check for types in db table
+        sql_request = 'INSERT INTO "%(table_name)s" %(fields)s VALUES %(values)s;' % {
+            'table_name': table_name,
+            'fields': fields,
+            'values': str(tuple(data_dict.values()))
+        }
+
+        self.__db.execute(sql_request)
+        self.__db_connection.commit()
 
     def delete_item(self, name):
         pass

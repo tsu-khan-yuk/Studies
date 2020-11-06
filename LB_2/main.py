@@ -85,7 +85,7 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
-                pass
+                self.ctrl.insert_item(string, '')
 
     def deleting_commands(self):
         rules = '+ ----------------------------------- +\n'

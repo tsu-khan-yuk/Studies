@@ -2,7 +2,7 @@ class User:
     user_id = None
     name = None
     mail = None
-    
+
     def __init__(self, id: int, name: str, mail: str) -> None:
         if isinstance(id, int) and isinstance(name, str) and isinstance(mail, str):
             self.user_id = id
@@ -13,14 +13,20 @@ class User:
 
     @staticmethod
     def fields():
-        return ('user_id', 'name', 'mail')
+        return ('name', 'e-mail')
+
+    # # TODO: add types
 
     @staticmethod
     def creating_from_tuple(values: tuple):
         return User(values[0], values[1], values[2])
 
     def __str__(self):
-        return '<User object[{}]: {}|{}>'.format(self.user_id, self.name, self.mail)
+        return '<User object[%(id)d]: %(name)20s|%(mail)15s>' % {
+            'id': self.user_id,
+            'name': self.name,
+            'mail': self.mail
+        }
 
 
 class Blog:
@@ -48,11 +54,12 @@ class Blog:
         return Blog(values[0], values[1], values[2], values[3])
 
     def __str__(self):
-        output = '<Blog object[{}]: ['.format(self.user_id)
-        output += ' name: "{}" |'.format(self.name)
-        output += ' description: "{}" |'.format(self.description)
-        output += ' ' # TODO: !!!
-        return output
+        return '<Blog object[%(id)d]: %(name)20s|%(description).20s... |%(fk_id)d>' % {
+            'id': self.blog_id,
+            'name': self.name,
+            'description': self.description,
+            'fk_id': self.user_id
+        }
 
 
 class Article:
@@ -80,10 +87,12 @@ class Article:
         return Article(values[0], values[1], values[2], values[3])
 
     def __str__(self):
-        output = '<Article object[{}]: ['.format(self.article_id)
-        output += 'name: "{}" | '.format(self.name)
-        output += 'text: "{}" | '.format(self.text)
-        output += 'fk_blog_id: "{}">'.format(self.text)
+        return '<Artilce object[%(id)d]: %(name)30s|%(text).30s... |%(fk_id)d>' % {
+            'id': self.article_id,
+            'name': self.name,
+            'text': self.text,
+            'fk_id': self.blog_id
+        }
 
 
 class Comment:
@@ -105,3 +114,10 @@ class Comment:
     @staticmethod
     def creating_from_tuple(values: tuple):
         return Comment(values[0], values[1], values[2])
+
+    def __str__(self):
+        return '<Comment object[%(id)d]: %(text).30s... |%(fk_id)d>' % {
+            'id': self.comment_id,
+            'text': self.text,
+            'fk_id': self.article_id
+        }
