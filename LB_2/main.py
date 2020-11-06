@@ -73,8 +73,13 @@ class MainConsole:
             elif string == 'table':
                 print('Chose table: User, Blog, Article, Comment')
                 while True:
-                    
-                    self.view.table_output(self.ctrl.get_all_table_items())
+                    table_name = input('>>> ')
+                    if table_name in {'User', 'Blog', 'Article', 'Comment'}:
+                        self.view.table_output(self.ctrl.get_all_table_items(table_name))
+                    elif table_name == 'cancel':
+                        break
+                    else:
+                        print('Invalid table_name')
 
     def creating_commands(self):
         pass
