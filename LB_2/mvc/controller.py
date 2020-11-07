@@ -59,23 +59,27 @@ class Controller:
             buffer.append(table_type.creating_from_tuple(i))
         return buffer
 
-    def get_item(self, table: str, condition: str) -> None:
-        # # TODO: ???
-        self.__db.execute(
-            'SELECT * FROM "%(table)s" WHERE %(condition)s' %
-            {
-            'table': table,
-            'condition': condition
-            }
-        )
-        data = self.__db.fetchall()
-        if not data:
-            print('Not found')
-            return
-        buffer = list()
-        for i in data:
-            buffer.append(table_type.creating_from_tuple(i))
-        return buffer
+    # def get_items(self, table: str, condition: str) -> None:
+    #     # # TODO: ???
+    #
+    #     # self.__db.execute(
+    #     #     'SELECT * FROM "%(table)s" WHERE %(condition)s' %
+    #     #     {
+    #     #     'table': table,
+    #     #     'condition': condition
+    #     #     }
+    #     # )
+    #     # data = self.__db.fetchall()
+    #     # if not data:
+    #     #     print('Not found')
+    #     #     return
+    #     # buffer = list()
+    #     # for i in data:
+    #     #     buffer.append(table_type.creating_from_tuple(i))
+    #     # return buffer
+
+    def find_items(self, fields: list):
+        pass
 
     @staticmethod
     def input_processing(string: str) -> "int, str":

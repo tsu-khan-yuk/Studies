@@ -5,6 +5,7 @@
     -> Програмний код виконати згідно шаблону MVC (модель-подання-контролер)
 """
 import datetime as date
+from re import sub
 from mvc.controller import Controller
 from mvc.view import View
 from mvc.model import User, Blog, Article, Comment
@@ -47,7 +48,7 @@ class MainConsole:
     def getter_commands(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "table" to see table                |\n'
-        rules += '| "item" to search items              |\n'
+        rules += '| "items" to search items              |\n'
         rules += '| "help" commmand to show this box    |\n'
         rules += '| "cancel" commmand to go back        |\n'
         rules += '+ ----------------------------------- +'
@@ -59,7 +60,7 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string == 'table':
-                print('Chose table: User, Blog, Article, Comment')
+                print('Choose table: User, Blog, Article, Comment')
                 while True:
                     table_name = input('/get/table/ >>> ')
                     if table_name in {'User', 'Blog', 'Article', 'Comment'}:
@@ -68,8 +69,16 @@ class MainConsole:
                         break
                     else:
                         print('Invalid table_name')
-            elif string == 'item':
-                pass
+            elif string == 'items':
+                print('Choose fields: user_id, blog_id, article_id, comment_id,\n'
+                        '\ttext, description, name, e-mail')
+                while True:
+                    fields_name = input('/get/fields/ >>> ')
+                    if fields_name == 'cancel':
+                        break
+                    fields_name = sub(',', ' ', fields_name).split()
+                    print(fields_name)
+
 
     def creating_commands(self):
         rules = '+ ----------------------------------- +\n'
