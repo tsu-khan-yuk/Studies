@@ -2,7 +2,8 @@ from mvc.local import db_settings
 from mvc.model import User, Blog, Article, Comment
 from re import sub
 import psycopg2 as psql
-
+import random
+import time
 
 def string_to_type(model_name: str):
 
@@ -46,8 +47,7 @@ class Controller:
         else:
             raise Exception('DB not found')
 
-    def get_all_table_items(self, table_name: str):
-        # # TODO: check for empty table
+    def get_all_table_items(self, table_name: str) -> list:
         self.__db.execute('SELECT * FROM "%(table)s"' % {'table': table_name})
         data = self.__db.fetchall()
         if not data:
@@ -59,7 +59,8 @@ class Controller:
             buffer.append(table_type.creating_from_tuple(i))
         return buffer
 
-    def show_item(self, table: str, condition: str) -> None:
+    def get_item(self, table: str, condition: str) -> None:
+        # # TODO: ???
         self.__db.execute(
             'SELECT * FROM "%(table)s" WHERE %(condition)s' %
             {
@@ -76,10 +77,36 @@ class Controller:
             buffer.append(table_type.creating_from_tuple(i))
         return buffer
 
+    @staticmethod
+    def input_processing(string: str) -> "int, str":
+        """
+        Функция принимает сторку и преобразовывает ее
+        в тип соотвецтвенно указаниям полсе ':'
+        <значение нужного типа>:<тип данных>
+        """
+        # # TODO: date ???
+        input_string = input(string)
+        if ":" in input_string:
+            string_parts = input_string.split(":")
+            if string_parts[1] == "int":
+                try:
+                    string_parts = int(string_parts[0])
+                except ValueError:
+                    print("Something went wrong")
+                return string_parts
+            elif string_parts[1] == "str":
+                return string_parts[0]
+            else:
+                print("Something went wrong")
+        else:
+            return input_string
+
+
     def insert_item(self, table_name, data):
         data_dict = dict()
+        print('You using formating input: ')
         for field in string_to_type(table_name).fields():
-            data_dict[field] = input('>>> Input {}: '.format(field))
+            data_dict[field] = self.input_processing('>>> Input {}: '.format(field))
         fields = tuple(data_dict.keys())
         values = tuple(data_dict.values())
 
