@@ -1,11 +1,13 @@
 class View:
 
     @staticmethod
-    def table_output(table_name, ctrl):
+    def table_view(table_name, ctrl):
         data = ctrl.get_all_table_items(table_name)
-        for i in data:
+        for item in data:
             print(i)
 
     @staticmethod
-    def item_output(data):
-        pass
+    def items_view(fields_name, ctrl):
+        data = ctrl.find_items(fields_name)
+        for item in data:
+            print(item)

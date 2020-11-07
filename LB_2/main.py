@@ -63,10 +63,10 @@ class MainConsole:
                 print('Choose table: User, Blog, Article, Comment')
                 while True:
                     table_name = input('/get/table/ >>> ')
-                    if table_name in {'User', 'Blog', 'Article', 'Comment'}:
-                        self.view.table_output(table_name, self.ctrl)
-                    elif table_name == 'cancel':
+                    if table_name == 'cancel':
                         break
+                    elif table_name in {'User', 'Blog', 'Article', 'Comment'}:
+                        self.view.table_view(table_name, self.ctrl)
                     else:
                         print('Invalid table_name')
             elif string == 'items':
@@ -77,7 +77,20 @@ class MainConsole:
                     if fields_name == 'cancel':
                         break
                     fields_name = sub(',', ' ', fields_name).split()
-                    print(fields_name)
+
+                    invalid_name = False
+                    for field in fields_name:
+                        if not field in {'user_id', 'blog_id', 'article_id', 'comment_id',
+                                        'text', 'description', 'name', 'e-mail'}:
+                            print('Invalid field_name {}'.format(field))
+                            invalid_name = True
+                            break
+                    if invalid_name:
+                        continue
+
+                    fields_name = list(set(fields_name))
+
+                    self.view.items_view(fields_name, self.ctrl)
 
 
     def creating_commands(self):

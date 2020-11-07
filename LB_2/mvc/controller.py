@@ -59,27 +59,16 @@ class Controller:
             buffer.append(table_type.creating_from_tuple(i))
         return buffer
 
-    # def get_items(self, table: str, condition: str) -> None:
-    #     # # TODO: ???
-    #
-    #     # self.__db.execute(
-    #     #     'SELECT * FROM "%(table)s" WHERE %(condition)s' %
-    #     #     {
-    #     #     'table': table,
-    #     #     'condition': condition
-    #     #     }
-    #     # )
-    #     # data = self.__db.fetchall()
-    #     # if not data:
-    #     #     print('Not found')
-    #     #     return
-    #     # buffer = list()
-    #     # for i in data:
-    #     #     buffer.append(table_type.creating_from_tuple(i))
-    #     # return buffer
-
     def find_items(self, fields: list):
-        pass
+        """
+        select * from INFORMATION_SCHEMA.COLUMNS
+        where COLUMN_NAME like '%clientid%'
+        """
+        for field in fields:
+            self.__db.execute('SELECT table_name FROM INFORMATION_SCHEMA.COLUMNS '
+                                "WHERE COLUMN_NAME like '%{}%'".format(field))
+        # print(self.__db.fetchall())
+        return self.__db.fetchall()
 
     @staticmethod
     def input_processing(string: str) -> "int, str":
