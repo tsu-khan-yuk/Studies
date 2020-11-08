@@ -16,10 +16,6 @@ class User:
         return ('name', 'e-mail')
 
     @staticmethod
-    def types():
-        return (str, str)
-
-    @staticmethod
     def creating_from_tuple(values: tuple):
         return User(values[0], values[1], values[2])
 
@@ -50,10 +46,6 @@ class Blog:
     @staticmethod
     def fields():
         return ('name', 'description', 'user_id')
-
-    @staticmethod
-    def types():
-        return (str, str, int)
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -89,10 +81,6 @@ class Article:
         return ('name', 'text', 'blog_id')
 
     @staticmethod
-    def types():
-        return (str, str, int)
-
-    @staticmethod
     def creating_from_tuple(values: tuple):
         return Article(values[0], values[1], values[2], values[3])
 
@@ -122,10 +110,6 @@ class Comment:
         return ('text', 'article_id')
 
     @staticmethod
-    def types():
-        return (str, int)
-
-    @staticmethod
     def creating_from_tuple(values: tuple):
         return Comment(values[0], values[1], values[2])
 
@@ -135,3 +119,15 @@ class Comment:
             'text': self.text,
             'fk_id': self.article_id
         }
+
+
+FIELED_TYPES = {
+    'user_id': int,
+    'blog_id': int,
+    'article_id': int,
+    'comment_id': int,
+    'text': str,
+    'description': str,
+    'name': str,
+    'e-mail': str
+}

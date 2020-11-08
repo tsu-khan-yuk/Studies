@@ -1,14 +1,8 @@
-"""
-    -> Реалізувати функції внесення, редагування та вилучення даних у таблицях бази даних, створених у лабораторній     роботі №1, засобами консольного інтерфейсу.
-    -> Передбачити автоматичне пакетне генерування «рандомізованих» даних у базі.
-    -> Забезпечити реалізацію пошуку за декількома атрибутами з двох та більше сутностей одночасно: для числових атрибутів – у рамках діапазону, для рядкових – як шаблон функції LIKE оператора SELECT SQL, для логічного типу – значення True/False, для дат – у рамках діапазону дат.
-    -> Програмний код виконати згідно шаблону MVC (модель-подання-контролер)
-"""
 import datetime as date
 from re import sub
 from mvc.controller import Controller
 from mvc.view import View
-from mvc.model import User, Blog, Article, Comment
+from mvc.model import User, Blog, Article, Comment, FIELED_TYPES
 
 
 class MainConsole:
@@ -48,7 +42,7 @@ class MainConsole:
     def getter_commands(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "table" to see table                |\n'
-        rules += '| "items" to search items              |\n'
+        rules += '| "items" to search items             |\n'
         rules += '| "help" commmand to show this box    |\n'
         rules += '| "cancel" commmand to go back        |\n'
         rules += '+ ----------------------------------- +'
@@ -80,8 +74,7 @@ class MainConsole:
 
                     invalid_name = False
                     for field in fields_name:
-                        if not field in {'user_id', 'blog_id', 'article_id', 'comment_id',
-                                        'text', 'description', 'name', 'e-mail'}:
+                        if not field in FIELED_TYPES.keys():
                             print('Invalid field_name {}'.format(field))
                             invalid_name = True
                             break
@@ -89,9 +82,29 @@ class MainConsole:
                         continue
 
                     fields_name = list(set(fields_name))
+                    conditions = list()
+                    ret = None
+                    for field in fields_name:
+                        if FIELED_TYPES[field] == int:
+                            while True:
+                                try:
+                                    left_limit = int(input('/get/fields({})/ >>> Input left limit: '.format(field)))
+                                    right_limit = int(input('/get/fields({})/ >>> Input right limit: '.format(field)))
+                                    break
+                                except:
+                                    print('Invalid type')
+                                    continue
+                            if left_limit > right_limit:
+                                left_limit, right_limit = right_limit, left_limit
+                            ret = [left_limit, right_limit]
 
-                    self.view.items_view(fields_name, self.ctrl)
+                        elif FIELED_TYPES[field] == str:
+                            ret = input('/get/fields({})/ >>> Input string pattern: '.format(field))
+                        conditions.append(ret)
 
+                    self.view.items_view(fields_name, conditions, self.ctrl)
+            else:
+                print('Invalid command')
 
     def creating_commands(self):
         rules = '+ ----------------------------------- +\n'

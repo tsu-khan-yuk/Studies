@@ -5,6 +5,7 @@ import psycopg2 as psql
 import random
 import time
 
+
 def string_to_type(model_name: str):
 
     if model_name == 'User':
@@ -59,16 +60,26 @@ class Controller:
             buffer.append(table_type.creating_from_tuple(i))
         return buffer
 
-    def find_items(self, fields: list):
-        """
-        select * from INFORMATION_SCHEMA.COLUMNS
-        where COLUMN_NAME like '%clientid%'
-        """
+    def find_items(self, fields: list, conditions: list):
+        tables = list()
         for field in fields:
             self.__db.execute('SELECT table_name FROM INFORMATION_SCHEMA.COLUMNS '
-                                "WHERE COLUMN_NAME like '%{}%'".format(field))
-        # print(self.__db.fetchall())
-        return self.__db.fetchall()
+                                "WHERE COLUMN_NAME like '%{}%' AND table_schema = 'public'".format(field))
+            tables += self.__db.fetchall()
+
+        for i in range(len(tables)):
+            tables[i] = tables[i][0]
+
+        tables = list(set(tables))
+        data = list()
+        for i in tables:
+            data += self.get_all_table_items(i)
+        for i in data:
+            try:
+                print(eval('i.user_id'))
+            except:
+                continue
+        return data
 
     @staticmethod
     def input_processing(string: str) -> "int, str":
@@ -105,7 +116,7 @@ class Controller:
 
         fields = sub("'", '"', str(fields))
 
-        # # TODO: add check for types in db table
+        # # TODO: add check for types in db table ['blog_id']
         sql_request = 'INSERT INTO "%(table_name)s" %(fields)s VALUES %(values)s;' % {
             'table_name': table_name,
             'fields': fields,
