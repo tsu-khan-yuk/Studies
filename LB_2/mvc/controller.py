@@ -61,25 +61,22 @@ class Controller:
         return buffer
 
     def find_items(self, fields: list, conditions: list):
-        tables = list()
-        for field in fields:
-            self.__db.execute('SELECT table_name FROM INFORMATION_SCHEMA.COLUMNS '
-                                "WHERE COLUMN_NAME like '%{}%' AND table_schema = 'public'".format(field))
-            tables += self.__db.fetchall()
+        """
+            fields: ['user_id', 'name']
+            conditions: [[0, 10], 'Ivan']
+        """
 
-        for i in range(len(tables)):
-            tables[i] = tables[i][0]
+        return []
 
-        tables = list(set(tables))
-        data = list()
-        for i in tables:
-            data += self.get_all_table_items(i)
-        for i in data:
-            try:
-                print(eval('i.user_id'))
-            except:
-                continue
-        return data
+    def __sql_request_generator(field: str, condition) -> str:
+        entities = list()
+        sql_request = str()
+        for table in ['User', 'Blog', 'Article', 'Comment']:
+            if field in string_to_type(table).fields():
+                entities.append(table)
+        for entity in entities:
+            pass
+
 
     @staticmethod
     def input_processing(string: str) -> "int, str":
