@@ -65,18 +65,38 @@ class Controller:
             fields: ['user_id', 'name']
             conditions: [[0, 10], 'Ivan']
         """
-
+        self.__sql_request_generator(fields, conditions)
         return []
 
-    def __sql_request_generator(field: str, condition) -> str:
+    @staticmethod
+    def __sql_request_generator(fields: list, conditions: list) -> str:
         entities = list()
-        sql_request = str()
-        for table in ['User', 'Blog', 'Article', 'Comment']:
-            if field in string_to_type(table).fields():
-                entities.append(table)
-        for entity in entities:
-            pass
-
+        attributes = list()
+        sql_request = 'SELECT * FROM '
+        for field in fields:
+            for table in ['User', 'Blog', 'Article', 'Comment']:
+                if field in string_to_type(table).fields():
+                    entities.append(table)
+                    attributes.append(field)
+        entities_set = set(entities)
+        entities_str = sub("'", '"', str(entities_set))
+        entities_str = sub(r'{|}', '', entities_str)
+        sql_request += entities_str
+        sql_request += ' WHERE '
+        condition_part = str()
+        condition_values = dict(zip(fields, conditions))
+        for entity, attribute in zip(entities, attributes):
+            print(attribute)
+            if isinstance(condition_values[attribute], str):
+                condition_part += f'"{entity}"."{attribute}"'
+                condition_part += f" like '%{condition_values[attribute]}%'"
+            elif isinstance(condition_values[attribute], list):
+                condition_part += f'{condition_values[attribute][0]} < "{entity}"."{attribute}"'
+                condition_part += ' AND '
+                condition_part += f'"{entity}"."{attribute}" < {condition_values[attribute][1]}'
+            condition_part += ' AND '
+        sql_request += condition_part[:-5]
+        print(sql_request)
 
     @staticmethod
     def input_processing(string: str) -> "int, str":
