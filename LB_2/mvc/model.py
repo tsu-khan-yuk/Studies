@@ -13,7 +13,7 @@ class User:
 
     @staticmethod
     def fields():
-        return ('name', 'e-mail')
+        return ('user_id','name', 'e-mail')
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -45,7 +45,7 @@ class Blog:
 
     @staticmethod
     def fields():
-        return ('name', 'description', 'user_id')
+        return ('blog_id','name', 'description', 'user_id')
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -78,7 +78,7 @@ class Article:
 
     @staticmethod
     def fields():
-        return ('name', 'text', 'blog_id')
+        return ('article_id', 'name', 'text', 'blog_id')
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -107,7 +107,7 @@ class Comment:
 
     @staticmethod
     def fields():
-        return ('text', 'article_id')
+        return ('comment_id', 'text', 'article_id')
 
     @staticmethod
     def creating_from_tuple(values: tuple):

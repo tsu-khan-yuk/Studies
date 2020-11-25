@@ -65,11 +65,14 @@ class Controller:
             fields: ['user_id', 'name']
             conditions: [[0, 10], 'Ivan']
         """
-        self.__sql_request_generator(fields, conditions)
-        return []
+        values = self.__sql_request_generator(fields, conditions)
+        self.__db.execute(values['sql_request'])
+        data = self.__db.fetchall()
+        print(values['entities'])
+        return data
 
     @staticmethod
-    def __sql_request_generator(fields: list, conditions: list) -> str:
+    def __sql_request_generator(fields: list, conditions: list) -> dict:
         entities = list()
         attributes = list()
         sql_request = 'SELECT * FROM '
@@ -86,7 +89,6 @@ class Controller:
         condition_part = str()
         condition_values = dict(zip(fields, conditions))
         for entity, attribute in zip(entities, attributes):
-            print(attribute)
             if isinstance(condition_values[attribute], str):
                 condition_part += f'"{entity}"."{attribute}"'
                 condition_part += f" like '%{condition_values[attribute]}%'"
@@ -96,7 +98,10 @@ class Controller:
                 condition_part += f'"{entity}"."{attribute}" < {condition_values[attribute][1]}'
             condition_part += ' AND '
         sql_request += condition_part[:-5]
-        print(sql_request)
+        ret = dict()
+        ret['entities'] = entities
+        ret['sql_request'] = sql_request
+        return ret
 
     @staticmethod
     def input_processing(string: str) -> "int, str":
@@ -126,6 +131,7 @@ class Controller:
     def insert_item(self, table_name, data):
         data_dict = dict()
         print('You using formating input: ')
+        # todo: change fields *_id
         for field in string_to_type(table_name).fields():
             data_dict[field] = self.input_processing('>>> Input {}: '.format(field))
         fields = tuple(data_dict.keys())
