@@ -63,7 +63,7 @@ class Controller:
     def __sql_request_generator(fields: list, conditions: list) -> dict:
         entities = list()
         attributes = list()
-        sql_request = 'SELECT * FROM '
+        sql_request = str()
         for field in fields:
             for table in ['User', 'Blog', 'Article', 'Comment']:
                 if field in string_to_type(table).fields():
@@ -72,24 +72,27 @@ class Controller:
         entities_set = set(entities)
         entities_str = sub(r"'", '"', str(entities_set))
         entities_str = sub(r'{|}', '', entities_str)
-        sql_request += entities_str
-        sql_request += ' WHERE '
         condition_values = dict(zip(fields, conditions))
-        string_conditions = '('
-        integer_conditions = '('
+        string_conditions = str()
+        integer_conditions = str()
         for entity, attribute in zip(entities, attributes):
-            # todo: create 2 variable for 'like'(with 'OR') and '><'(with 'AND') statements
+
             if isinstance(condition_values[attribute], str):
-                string_conditions += f'"{entity}"."{attribute}"'
-                string_conditions += f" like '%{condition_values[attribute]}%'"
-                string_conditions += ' OR '
+                string_conditions += 'SELECT %(attribute)s FROM "%(entity)s" '\
+                                     'WHERE "%(entity)s"."%(attribute)s" ' % \
+                {
+                    'attribute': attribute,
+                    'entity': entity
+                }
+                string_conditions += "like '%%(value)s%' union all" % {
+                    'value': condition_values[attribute]
+                }
             elif isinstance(condition_values[attribute], list):
                 integer_conditions += f'{condition_values[attribute][0]} < "{entity}"."{attribute}"'
                 integer_conditions += ' AND '
                 integer_conditions += f'"{entity}"."{attribute}" < {condition_values[attribute][1]}'
                 integer_conditions += ' AND '
-        string_conditions = (string_conditions[:-4] + ')') if string_conditions != '(' else '()'
-        integer_conditions = (integer_conditions[:-6] + ')') if integer_conditions != '(' else '()'
+
         sql_request += string_conditions + ' AND ' + integer_conditions
         ret = dict()
         ret['entities'] = entities
