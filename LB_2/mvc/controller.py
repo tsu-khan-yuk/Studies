@@ -2,7 +2,6 @@ from mvc.local import db_settings
 from mvc.model import User, Blog, Article, Comment
 from re import sub
 import psycopg2 as psql
-import random
 import time
 
 
@@ -53,23 +52,12 @@ class Controller:
         data = self.__db.fetchall()
         if not data:
             print('Table is empty')
-            return
+            return []
         buffer = list()
         table_type = string_to_type(table_name)
         for i in data:
             buffer.append(table_type.creating_from_tuple(i))
         return buffer
-
-    def find_items(self, fields: list, conditions: list):
-        """
-            fields: ['user_id', 'name']
-            conditions: [[0, 10], 'Ivan']
-        """
-        values = self.__sql_request_generator(fields, conditions)
-        self.__db.execute(values['sql_request'])
-        data = self.__db.fetchall()
-        print(values['entities'])
-        return data
 
     @staticmethod
     def __sql_request_generator(fields: list, conditions: list) -> dict:
@@ -82,26 +70,38 @@ class Controller:
                     entities.append(table)
                     attributes.append(field)
         entities_set = set(entities)
-        entities_str = sub("'", '"', str(entities_set))
+        entities_str = sub(r"'", '"', str(entities_set))
         entities_str = sub(r'{|}', '', entities_str)
         sql_request += entities_str
         sql_request += ' WHERE '
-        condition_part = str()
         condition_values = dict(zip(fields, conditions))
+        string_conditions = '('
+        integer_conditions = '('
         for entity, attribute in zip(entities, attributes):
+            # todo: create 2 variable for 'like'(with 'OR') and '><'(with 'AND') statements
             if isinstance(condition_values[attribute], str):
-                condition_part += f'"{entity}"."{attribute}"'
-                condition_part += f" like '%{condition_values[attribute]}%'"
+                string_conditions += f'"{entity}"."{attribute}"'
+                string_conditions += f" like '%{condition_values[attribute]}%'"
+                string_conditions += ' OR '
             elif isinstance(condition_values[attribute], list):
-                condition_part += f'{condition_values[attribute][0]} < "{entity}"."{attribute}"'
-                condition_part += ' AND '
-                condition_part += f'"{entity}"."{attribute}" < {condition_values[attribute][1]}'
-            condition_part += ' AND '
-        sql_request += condition_part[:-5]
+                integer_conditions += f'{condition_values[attribute][0]} < "{entity}"."{attribute}"'
+                integer_conditions += ' AND '
+                integer_conditions += f'"{entity}"."{attribute}" < {condition_values[attribute][1]}'
+                integer_conditions += ' AND '
+        string_conditions = (string_conditions[:-4] + ')') if string_conditions != '(' else '()'
+        integer_conditions = (integer_conditions[:-6] + ')') if integer_conditions != '(' else '()'
+        sql_request += string_conditions + ' AND ' + integer_conditions
         ret = dict()
         ret['entities'] = entities
         ret['sql_request'] = sql_request
+        print(sql_request)
         return ret
+
+    def find_items(self, fields: list, conditions: list):
+        values = self.__sql_request_generator(fields, conditions)
+        self.__db.execute(values['sql_request'])
+        data = self.__db.fetchall()
+        return data
 
     @staticmethod
     def input_processing(string: str) -> "int, str":
@@ -110,7 +110,7 @@ class Controller:
         в тип соотвецтвенно указаниям полсе ':'
         <значение нужного типа>:<тип данных>
         """
-        # # TODO: date ???
+        # TODO: date ???
         input_string = input(string)
         if ":" in input_string:
             string_parts = input_string.split(":")
@@ -130,16 +130,17 @@ class Controller:
 
     def insert_item(self, table_name, data):
         data_dict = dict()
-        print('You using formating input: ')
-        # todo: change fields *_id
-        for field in string_to_type(table_name).fields():
-            data_dict[field] = self.input_processing('>>> Input {}: '.format(field))
+        print('You are using formatting input: ')
+        # todo: change fields *_id [*]
+        fields_set = string_to_type(table_name).fields()
+        for i in range(1, len(fields_set)):
+            data_dict[fields_set[i]] = self.input_processing('>>> Input {}: '.format(fields_set[i]))
         fields = tuple(data_dict.keys())
         values = tuple(data_dict.values())
 
         fields = sub("'", '"', str(fields))
 
-        # # TODO: add check for types in db table ['blog_id']
+        # TODO: add check for types in db table ['blog_id']
         sql_request = 'INSERT INTO "%(table_name)s" %(fields)s VALUES %(values)s;' % {
             'table_name': table_name,
             'fields': fields,

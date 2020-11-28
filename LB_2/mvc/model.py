@@ -85,7 +85,7 @@ class Article:
         return Article(values[0], values[1], values[2], values[3])
 
     def __str__(self):
-        return '<Artilce object[%(id)d]: %(name)30s|%(text).30s... |%(fk_id)d>' % {
+        return '<Article object[%(id)d]: %(name)30s|%(text).30s... |%(fk_id)d>' % {
             'id': self.article_id,
             'name': self.name,
             'text': self.text,
@@ -121,7 +121,7 @@ class Comment:
         }
 
 
-FIELED_TYPES = {
+FIELD_TYPES = {
     'user_id': int,
     'blog_id': int,
     'article_id': int,

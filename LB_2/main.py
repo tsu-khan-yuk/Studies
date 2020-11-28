@@ -2,7 +2,7 @@ import datetime as date
 from re import sub
 from mvc.controller import Controller
 from mvc.view import View
-from mvc.model import User, Blog, Article, Comment, FIELED_TYPES
+from mvc.model import User, Blog, Article, Comment, FIELD_TYPES
 
 
 class MainConsole:
@@ -13,11 +13,11 @@ class MainConsole:
         print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' %
                 {'date': str(date.datetime.now())[:-10]})
         hello_string = '+ ------------------------------------------- +\n'
-        hello_string += '| "create" commmand to create item            |\n'
-        hello_string += '| "get" commmand to get item from table       |\n'
-        hello_string += '| "delete" commmand to delete item from table |\n'
-        hello_string += '| "quit" commmand to quit                     |\n'
-        hello_string += '| "help" commmand to show this box            |\n'
+        hello_string += '| "create" command to create item            |\n'
+        hello_string += '| "get" command to get item from table       |\n'
+        hello_string += '| "delete" command to delete item from table |\n'
+        hello_string += '| "quit" command to quit                     |\n'
+        hello_string += '| "help" command to show this box            |\n'
         hello_string += '+ ------------------------------------------- +'
         print(hello_string)
         while True:
@@ -43,8 +43,8 @@ class MainConsole:
         rules = '+ ----------------------------------- +\n'
         rules += '| "table" to see table                |\n'
         rules += '| "items" to search items             |\n'
-        rules += '| "help" commmand to show this box    |\n'
-        rules += '| "cancel" commmand to go back        |\n'
+        rules += '| "help" command to show this box     |\n'
+        rules += '| "cancel" command to go back         |\n'
         rules += '+ ----------------------------------- +'
         print(rules)
         while True:
@@ -74,7 +74,7 @@ class MainConsole:
 
                     invalid_name = False
                     for field in fields_name:
-                        if not field in FIELED_TYPES.keys():
+                        if not field in FIELD_TYPES.keys():
                             print('Invalid field_name {}'.format(field))
                             invalid_name = True
                             break
@@ -85,7 +85,7 @@ class MainConsole:
                     conditions = list()
                     ret = None
                     for field in fields_name:
-                        if FIELED_TYPES[field] == int:
+                        if FIELD_TYPES[field] == int:
                             while True:
                                 try:
                                     left_limit = int(input('/get/fields({})/ >>> Input left limit: '.format(field)))
@@ -98,7 +98,7 @@ class MainConsole:
                                 left_limit, right_limit = right_limit, left_limit
                             ret = [left_limit, right_limit]
 
-                        elif FIELED_TYPES[field] == str:
+                        elif FIELD_TYPES[field] == str:
                             ret = input('/get/fields({})/ >>> Input string pattern: '.format(field))
                         conditions.append(ret)
 
@@ -108,8 +108,8 @@ class MainConsole:
 
     def creating_commands(self):
         rules = '+ ----------------------------------- +\n'
-        rules += '| "help" commmand to show this box    |\n'
-        rules += '| "cancel" commmand to go back        |\n'
+        rules += '| "help" command to show this box    |\n'
+        rules += '| "cancel" command to go back        |\n'
         rules += '+ ----------------------------------- +\n'
         rules += 'Chose table: User, Blog, Article, Comment'
         print(rules)
@@ -125,8 +125,8 @@ class MainConsole:
     def deleting_commands(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "item" to search items              |\n'
-        rules += '| "help" commmand to show this box    |\n'
-        rules += '| "cancel" commmand to go back        |\n'
+        rules += '| "help" command to show this box    |\n'
+        rules += '| "cancel" command to go back        |\n'
         rules += '+ ----------------------------------- +'
         rules += 'Chose table: User, Blog, Article, Comment'
         print(rules)

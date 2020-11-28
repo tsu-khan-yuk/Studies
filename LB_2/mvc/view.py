@@ -9,5 +9,8 @@ class View:
     @staticmethod
     def items_view(fields_name, conditions, ctrl):
         data = ctrl.find_items(fields_name, conditions)
+        if data == []:
+            print('Information not found')
+            return None
         for item in data:
             print(item)
