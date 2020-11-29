@@ -13,7 +13,7 @@ class MainConsole:
         print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' %
                 {'date': str(date.datetime.now())[:-10]})
         hello_string = '+ ------------------------------------------- +\n'
-        hello_string += '| "create" command to create item             |\n'
+        hello_string += '| "insert" command to insert item             |\n'
         hello_string += '| "get" command to get item from table        |\n'
         hello_string += '| "delete" command to delete item from table  |\n'
         hello_string += '| "quit" command to quit                      |\n'
@@ -26,14 +26,14 @@ class MainConsole:
                 break
             elif input_string == 'help':
                 print(hello_string)
-            elif input_string in {'create', 'delete', 'get'}:
+            elif input_string in {'insert', 'delete', 'get'}:
                 self.command_manager(input_string)
             else:
                 print('SyntaxError: Invalid command')
 
     def command_manager(self, cmd_name: str):
-        if cmd_name == 'create':
-            self.creating_commands()
+        if cmd_name == 'insert':
+            self.inserting_commands()
         elif cmd_name == 'get':
             self.getter_commands()
         elif cmd_name == 'delete':
@@ -42,7 +42,7 @@ class MainConsole:
     def getter_commands(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "table" to see table                |\n'
-        rules += '| "items" to search items             |\n'
+        rules += '| "item" to search item               |\n'
         rules += '| "help" command to show this box     |\n'
         rules += '| "cancel" command to go back         |\n'
         rules += '+ ----------------------------------- +'
@@ -63,7 +63,7 @@ class MainConsole:
                         self.view.table_view(table_name, self.ctrl)
                     else:
                         print('Invalid table_name')
-            elif string == 'items':
+            elif string == 'item':
                 print('Choose fields: user_id, blog_id, article_id, comment_id,\n'
                         '\ttext, description, name, e-mail')
                 while True:
@@ -106,7 +106,7 @@ class MainConsole:
             else:
                 print('Invalid command')
 
-    def creating_commands(self):
+    def inserting_commands(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "help" command to show this box    |\n'
         rules += '| "cancel" command to go back        |\n'
@@ -114,7 +114,7 @@ class MainConsole:
         rules += 'Chose table: User, Blog, Article, Comment'
         print(rules)
         while True:
-            string = input('/create/ >>> ')
+            string = input('/insert/ >>> ')
             if string == 'cancel':
                 return
             elif string == 'help':

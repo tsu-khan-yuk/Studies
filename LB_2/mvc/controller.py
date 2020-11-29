@@ -1,7 +1,7 @@
 from mvc.local import db_settings
 from mvc.model import User, Blog, Article, Comment
 from re import sub
-from datetime import datetime
+from datetime import datetime, timedelta
 import psycopg2 as psql
 
 
@@ -102,6 +102,7 @@ class Controller:
 
     def find_items(self, fields: list, conditions: list) -> dict:
         data = dict()
+        stop1, start1, stop2, start2 = timedelta(), timedelta(), timedelta(), timedelta()
         values = self.__sql_search_query_generator(fields, conditions)
 
         if values['string_search']:
@@ -131,7 +132,6 @@ class Controller:
         в тип соотвецтвенно указаниям полсе ':'
         <значение нужного типа>:<тип данных>
         """
-        # TODO: date ???
         input_string = input(string)
         if ":" in input_string:
             string_parts = input_string.split(":")
