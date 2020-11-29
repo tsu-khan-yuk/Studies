@@ -1,5 +1,5 @@
 # Own
-.vscode/
+LB_2/.vscode/
 makefile
 
 # Byte-compiled / optimized / DLL files
@@ -9,7 +9,6 @@ __pycache__/
 *$py.class
 *~
 .DS_Store
-.idea/
 Eshop/.DS_Store
 static/
 local.py
