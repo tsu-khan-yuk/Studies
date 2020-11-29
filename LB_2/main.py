@@ -13,11 +13,11 @@ class MainConsole:
         print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' %
                 {'date': str(date.datetime.now())[:-10]})
         hello_string = '+ ------------------------------------------- +\n'
-        hello_string += '| "create" command to create item            |\n'
-        hello_string += '| "get" command to get item from table       |\n'
-        hello_string += '| "delete" command to delete item from table |\n'
-        hello_string += '| "quit" command to quit                     |\n'
-        hello_string += '| "help" command to show this box            |\n'
+        hello_string += '| "create" command to create item             |\n'
+        hello_string += '| "get" command to get item from table        |\n'
+        hello_string += '| "delete" command to delete item from table  |\n'
+        hello_string += '| "quit" command to quit                      |\n'
+        hello_string += '| "help" command to show this box             |\n'
         hello_string += '+ ------------------------------------------- +'
         print(hello_string)
         while True:

@@ -1,8 +1,11 @@
 from mvc.local import db_settings
 from mvc.model import User, Blog, Article, Comment
 from re import sub
+from datetime import datetime
 import psycopg2 as psql
-import time
+
+
+push_timer_button = lambda: datetime.now()
 
 
 def string_to_type(model_name: str):
@@ -60,50 +63,65 @@ class Controller:
         return buffer
 
     @staticmethod
-    def __sql_request_generator(fields: list, conditions: list) -> dict:
+    def __sql_search_query_generator(fields: list, conditions: list) -> dict:
         entities = list()
         attributes = list()
-        sql_request = str()
+        sql_request = dict()
         for field in fields:
             for table in ['User', 'Blog', 'Article', 'Comment']:
                 if field in string_to_type(table).fields():
                     entities.append(table)
                     attributes.append(field)
-        entities_set = set(entities)
-        entities_str = sub(r"'", '"', str(entities_set))
-        entities_str = sub(r'{|}', '', entities_str)
         condition_values = dict(zip(fields, conditions))
-        string_conditions = str()
-        integer_conditions = str()
+        string_search = str()
+        integer_search = str()
         for entity, attribute in zip(entities, attributes):
-
             if isinstance(condition_values[attribute], str):
-                string_conditions += 'SELECT %(attribute)s FROM "%(entity)s" '\
-                                     'WHERE "%(entity)s"."%(attribute)s" ' % \
+                string_search += 'SELECT %(attribute)s FROM "%(entity)s" '\
+                                 'WHERE "%(entity)s"."%(attribute)s" ' % \
                 {
                     'attribute': attribute,
                     'entity': entity
                 }
-                string_conditions += "like '%%(value)s%' union all" % {
-                    'value': condition_values[attribute]
-                }
+                string_search += f"like '%{condition_values[attribute]}%' "
+                string_search += 'union all '
             elif isinstance(condition_values[attribute], list):
-                integer_conditions += f'{condition_values[attribute][0]} < "{entity}"."{attribute}"'
-                integer_conditions += ' AND '
-                integer_conditions += f'"{entity}"."{attribute}" < {condition_values[attribute][1]}'
-                integer_conditions += ' AND '
+                integer_search += 'SELECT %(attribute)s FROM "%(entity)s" '\
+                                  'WHERE %(right)d < "%(entity)s"."%(attribute)s" '\
+                                  'AND "%(entity)s"."%(attribute)s" < %(left)d ' % \
+                {
+                    'attribute': attribute,
+                    'entity': entity,
+                    'right': condition_values[attribute][0],
+                    'left': condition_values[attribute][1]
+                }
+                integer_search += 'union all '
+        sql_request['string_search'] = string_search[:-len('union all ')]
+        sql_request['integer_search'] = integer_search[:-len('union all ')]
+        return sql_request
 
-        sql_request += string_conditions + ' AND ' + integer_conditions
-        ret = dict()
-        ret['entities'] = entities
-        ret['sql_request'] = sql_request
-        print(sql_request)
-        return ret
+    def find_items(self, fields: list, conditions: list) -> dict:
+        data = dict()
+        values = self.__sql_search_query_generator(fields, conditions)
 
-    def find_items(self, fields: list, conditions: list):
-        values = self.__sql_request_generator(fields, conditions)
-        self.__db.execute(values['sql_request'])
-        data = self.__db.fetchall()
+        if values['string_search']:
+            start1 = push_timer_button()
+            self.__db.execute(values['string_search'])
+            stop1 = push_timer_button()
+            data['string'] = self.__db.fetchall()
+            for raw_data, data_list_counter in zip(data['string'], range(len(data['string']))):
+                data['string'][data_list_counter] = raw_data[0]
+
+        if values['integer_search']:
+            start2 = push_timer_button()
+            self.__db.execute(values['integer_search'])
+            stop2 = push_timer_button()
+            data['integer'] = self.__db.fetchall()
+            for raw_data, data_list_counter in zip(data['integer'], range(len(data['integer']))):
+                data['integer'][data_list_counter] = raw_data[0]
+
+        data['timer'] = ((stop1 - start1) + (stop2 - start2)).microseconds
+
         return data
 
     @staticmethod

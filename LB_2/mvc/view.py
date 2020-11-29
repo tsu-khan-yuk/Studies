@@ -9,8 +9,8 @@ class View:
     @staticmethod
     def items_view(fields_name, conditions, ctrl):
         data = ctrl.find_items(fields_name, conditions)
-        if data == []:
-            print('Information not found')
-            return None
-        for item in data:
-            print(item)
+        for data_type in data.keys():
+            print('{} values:'.format(data_type))
+            for result in data[data_type]:
+                print('|%(value)10s|' % {'value': result})
+        print('Time result: {} [ms]'.format(data['timer']))
