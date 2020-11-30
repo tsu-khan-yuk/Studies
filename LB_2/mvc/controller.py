@@ -140,9 +140,10 @@ class Controller:
                 return input_string
 
 
-    def insert_item(self, table_name: str, data):
+    def insert_item(self, table_name: str):
         data_dict = dict()
-        fields_set = string_to_type(table_name).fields()
+        table = string_to_type(table_name)
+        fields_set = table.fields()
         for i in range(1, len(fields_set)):
             data_dict[fields_set[i]] = self.input_processing('>>> Input {}: '.format(fields_set[i]), fields_set[i])
         fields = tuple(data_dict.keys())
@@ -157,11 +158,14 @@ class Controller:
         }
 
         try:
+            execution_flag = False
             self.__db.execute(sql_request)
+            execution_flag = True
         except Exception as ex:
             print('Error: [{}]'.format(str(type(ex))[len("<class 'psycopg2.errors."):-len("'>")]))
             print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
         self.__db_connection.commit()
+        return sql_request if execution_flag else ''
 
     def update_item(self):
         pass

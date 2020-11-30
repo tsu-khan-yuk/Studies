@@ -12,13 +12,14 @@ class MainConsole:
     def __init__(self):
         print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' %
                 {'date': str(date.datetime.now())[:-10]})
-        hello_string = '+ ------------------------------------------- +\n'
-        hello_string += '| "insert" command to insert item             |\n'
-        hello_string += '| "get" command to get item from table        |\n'
-        hello_string += '| "delete" command to delete item from table  |\n'
-        hello_string += '| "quit" command to quit                      |\n'
-        hello_string += '| "help" command to show this box             |\n'
-        hello_string += '+ ------------------------------------------- +'
+        hello_string = '+ --------------------------------------------- +\n'
+        hello_string += '| "insert" command to insert item               |\n'
+        hello_string += '| "get" command to get item from table          |\n'
+        hello_string += '| "update" command to update items from tables  |\n'
+        hello_string += '| "delete" command to delete item from table    |\n'
+        hello_string += '| "quit" command to quit                        |\n'
+        hello_string += '| "help" command to show this box               |\n'
+        hello_string += '+ --------------------------------------------- +'
         print(hello_string)
         while True:
             input_string = input('/ >>> ')
@@ -26,20 +27,22 @@ class MainConsole:
                 break
             elif input_string == 'help':
                 print(hello_string)
-            elif input_string in {'insert', 'delete', 'get'}:
+            elif input_string in {'insert', 'delete', 'get', 'update'}:
                 self.command_manager(input_string)
             else:
                 print('SyntaxError: Invalid command')
 
     def command_manager(self, cmd_name: str):
         if cmd_name == 'insert':
-            self.inserting_commands()
+            self.insert_menu()
         elif cmd_name == 'get':
-            self.getter_commands()
+            self.get_menu()
+        elif cmd_name == 'update':
+            self.update_menu()
         elif cmd_name == 'delete':
-            self.deleting_commands()
+            self.delete_menu()
 
-    def getter_commands(self):
+    def get_menu(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "table" to see table                |\n'
         rules += '| "item" to search item               |\n'
@@ -106,7 +109,7 @@ class MainConsole:
             else:
                 print('Invalid command')
 
-    def inserting_commands(self):
+    def insert_menu(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "help" command to show this box    |\n'
         rules += '| "cancel" command to go back        |\n'
@@ -120,9 +123,12 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
-                self.ctrl.insert_item(string, '')
+                self.ctrl.insert_item(string)
 
-    def deleting_commands(self):
+    def update_menu(self):
+        pass
+
+    def delete_menu(self):
         rules = '+ ----------------------------------- +\n'
         rules += '| "item" to search items              |\n'
         rules += '| "help" command to show this box    |\n'
@@ -137,7 +143,7 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
-                pass
+                self.ctrl.delete_item(string)
 
 
 if __name__ == '__main__':

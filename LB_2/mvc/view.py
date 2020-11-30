@@ -15,3 +15,9 @@ class View:
             for result in data[data_type]:
                 print('|%(value)10s|' % {'value': result})
         print('Time result: {} [ms]'.format(time))
+
+    def delete_view(self):
+        pass
+
+    def update_view(self):
+        pass
