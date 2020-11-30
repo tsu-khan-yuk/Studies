@@ -142,13 +142,11 @@ class Controller:
 
     def insert_item(self, table_name: str):
         data_dict = dict()
-        table = string_to_type(table_name) # todo: free time
+        table = string_to_type(table_name)
         fields_set = table.fields()
         for i in range(1, len(fields_set)):
             data_dict[fields_set[i]] = self.input_processing('>>> Input {}: '.format(fields_set[i]), fields_set[i])
         fields = tuple(data_dict.keys())
-        values = tuple(data_dict.values())
-
         fields = sub("'", '"', str(fields))
 
         sql_request = 'INSERT INTO "%(table_name)s" %(fields)s VALUES %(values)s;' % {
@@ -164,8 +162,9 @@ class Controller:
         except Exception as ex:
             print('Error: [{}]'.format(str(type(ex))[len("<class 'psycopg2.errors."):-len("'>")]))
             print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
+        if execution_flag:
+            print('Request: Success')
         self.__db_connection.commit()
-        return sql_request if execution_flag else ''
 
     def insert_random_item(self, table_name: str, rows_amount: int):
         table_fields = string_to_type(table_name).fields()[1:]
@@ -181,9 +180,9 @@ class Controller:
                 entities.remove(table_name)
                 sql_request += f' (SELECT "{field}" FROM "{entities[0]}" ORDER BY RANDOM() LIMIT 1),'
             elif FIELD_TYPES[field] == str:
-                sql_request += ' chr(trunc(65 + random()*50000)::int) ||' \
-                               ' chr(trunc(65 + random()*50000)::int) ||'\
-                               ' chr(trunc(65 + random()*50000)::int),'
+                sql_request += ' chr(trunc(65 + random()*25)::int) ||' \
+                               ' chr(trunc(65 + random()*25)::int) ||'\
+                               ' chr(trunc(65 + random()*25)::int),'
 
         sql_request = sql_request[:-len(',')]
         sql_request += ' FROM generate_series(1, {});'.format(rows_amount)
@@ -199,8 +198,34 @@ class Controller:
             print('Request: Success')
         self.__db_connection.commit()
 
-    def update_item(self):
-        pass
+    def update_item(self, table_name: str, attribute_to_change: str, new_value: str, key_attribute: str, key_value: str):
+        sql_request = f'UPDATE "{table_name}" SET "{attribute_to_change}" = '\
+                      f"'{new_value}' " \
+                      f'WHERE "{key_attribute}" = ' \
+                      f"'{key_value}'"
 
-    def delete_item(self, name):
-        pass
+        try:
+            execution_flag = False
+            self.__db.execute(sql_request)
+            execution_flag = True
+        except Exception as ex:
+            print('Error: [{}]'.format(str(type(ex))[len("<class 'psycopg2.errors."):-len("'>")]))
+            print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
+        if execution_flag:
+            print('Request: Success')
+        self.__db_connection.commit()
+
+    def delete_item(self, entity: str, attribute: str, value: str):
+        sql_request = 'DELETE FROM "{}" WHERE "{}" = '\
+                      "'{}'".format(entity, attribute, value)
+
+        try:
+            execution_flag = False
+            self.__db.execute(sql_request)
+            execution_flag = True
+        except Exception as ex:
+            print('Error: [{}]'.format(str(type(ex))[len("<class 'psycopg2.errors."):-len("'>")]))
+            print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
+        if execution_flag:
+            print('Request: Success')
+        self.__db_connection.commit()

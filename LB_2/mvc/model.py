@@ -13,7 +13,7 @@ class User:
 
     @staticmethod
     def fields():
-        return ('user_id','name', 'e-mail')
+        return 'user_id', 'name', 'e-mail'
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -35,7 +35,7 @@ class Blog:
 
     def __init__(self, id: int, name: str, description: str, user_id) -> None:
         if isinstance(id, int) and isinstance(name, str) and \
-            isinstance(description, str) and isinstance(user_id,(int, User)):
+                isinstance(description, str) and isinstance(user_id, (int, User)):
             self.blog_id = id
             self.name = name
             self.description = description
@@ -45,7 +45,7 @@ class Blog:
 
     @staticmethod
     def fields():
-        return ('blog_id','name', 'description', 'user_id')
+        return 'blog_id', 'name', 'description', 'user_id'
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -68,7 +68,7 @@ class Article:
 
     def __init__(self, id: int, name: str, text: str, blog_id) -> None:
         if isinstance(id, int) and isinstance(name, str) and \
-            isinstance(text, str) and isinstance(blog_id, (int, Blog)):
+                isinstance(text, str) and isinstance(blog_id, (int, Blog)):
             self.article_id = id
             self.name = name
             self.text = text
@@ -78,7 +78,7 @@ class Article:
 
     @staticmethod
     def fields():
-        return ('article_id', 'name', 'text', 'blog_id')
+        return 'article_id', 'name', 'text', 'blog_id'
 
     @staticmethod
     def creating_from_tuple(values: tuple):
@@ -100,14 +100,14 @@ class Comment:
 
     def __init__(self, id: int, text: str, article_id) -> None:
         if isinstance(id, int) and isinstance(text, str) and \
-            isinstance(article_id, (int, Article)):
+                isinstance(article_id, (int, Article)):
             self.comment_id = id
             self.text = text
             self.article_id = article_id
 
     @staticmethod
     def fields():
-        return ('comment_id', 'text', 'article_id')
+        return 'comment_id', 'text', 'article_id'
 
     @staticmethod
     def creating_from_tuple(values: tuple):

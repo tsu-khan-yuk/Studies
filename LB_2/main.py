@@ -1,7 +1,7 @@
 import datetime as date
 from re import sub
 from numpy import fabs
-from mvc.controller import Controller
+from mvc.controller import Controller, string_to_type
 from mvc.view import View
 from mvc.model import User, Blog, Article, Comment, FIELD_TYPES
 
@@ -12,7 +12,7 @@ class MainConsole:
 
     def __init__(self):
         print('PyPSQL console 0.9(Based on Python 3.6.9+) [%(date)s]' %
-                {'date': str(date.datetime.now())[:-10]})
+              {'date': str(date.datetime.now())[:-10]})
         hello_string = '+ --------------------------------------------- +\n'
         hello_string += '| "insert" command to insert item               |\n'
         hello_string += '| "get" command to get item from table          |\n'
@@ -31,7 +31,7 @@ class MainConsole:
             elif input_string in {'insert', 'delete', 'get', 'update'}:
                 self.command_manager(input_string)
             else:
-                print('SyntaxError: Invalid command')
+                print('Invalid command')
 
     def command_manager(self, cmd_name: str):
         if cmd_name == 'insert':
@@ -69,7 +69,7 @@ class MainConsole:
                         print('Invalid table_name')
             elif string == 'item':
                 print('Choose fields: user_id, blog_id, article_id, comment_id,\n'
-                        '\ttext, description, name, e-mail')
+                      '\ttext, description, name, e-mail')
                 while True:
                     fields_name = input('/get/fields/ >>> ')
                     if fields_name == 'cancel':
@@ -78,7 +78,7 @@ class MainConsole:
 
                     invalid_name = False
                     for field in fields_name:
-                        if not field in FIELD_TYPES.keys():
+                        if field not in FIELD_TYPES.keys():
                             print('Invalid field_name {}'.format(field))
                             invalid_name = True
                             break
@@ -125,7 +125,8 @@ class MainConsole:
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
                 while True:
-                    input_type = input('Create random row or manual input(random/manual)?\n/insert/ >>> ')
+                    input_type = input('Create random row or manual input(random/manual)?\n'
+                                       '/insert/"%s" >>> ' % string)
                     if input_type == 'manual':
                         self.ctrl.insert_item(string)
                     elif input_type == 'random':
@@ -141,16 +142,60 @@ class MainConsole:
                         break
                     else:
                         print('Invalid option')
+            else:
+                print('Invalid command')
 
     def update_menu(self):
-        pass
+        rules = '+ ----------------------------------- +\n'
+        rules += '| "help" command to show this box    |\n'
+        rules += '| "cancel" command to go back        |\n'
+        rules += '+ ----------------------------------- +\n'
+        rules += 'Chose table: User, Blog, Article, Comment'
+        print(rules)
+        while True:
+            string = input('/update/ >>> ')
+            if string == 'cancel':
+                return
+            elif string == 'help':
+                print(rules)
+            elif string in {'User', 'Blog', 'Article', 'Comment'}:
+                table_name = string
+                execution_flag = True
+                while execution_flag:
+                    attribute = input('>>> Input name of attribute to be changed: ')
+                    if attribute in string_to_type(string).fields():
+                        while execution_flag:
+                            new_value = input('>>> Input new value for {}: '.format(attribute))
+                            if FIELD_TYPES[attribute] == int:
+                                try:
+                                    int(new_value)
+                                except:
+                                    print('Invalid type')
+                                    continue
+                            print('Choose attribute name: {}'.format(
+                                sub(r'\(|\)', '', str(string_to_type(table_name).fields()))))
+                            while execution_flag:
+                                key_attribute = input('>>> Input key attribute to search: ')
+                                if key_attribute in string_to_type(table_name).fields():
+                                    key_value = input('>>> Input key value: ')
+                                    if FIELD_TYPES[key_attribute] == int:
+                                        try:
+                                            int(key_value)
+                                        except:
+                                            print('Invalid type')
+                                            continue
+                                    self.ctrl.update_item(table_name, attribute, new_value, key_attribute, key_value)
+                                    execution_flag = False
+                    else:
+                        print('Invalid field name')
+            else:
+                print('Invalid command')
 
     def delete_menu(self):
         rules = '+ ----------------------------------- +\n'
-        rules += '| "item" to search items              |\n'
         rules += '| "help" command to show this box    |\n'
         rules += '| "cancel" command to go back        |\n'
-        rules += '+ ----------------------------------- +'
+        rules += '+ ----------------------------------- +\n'
         rules += 'Chose table: User, Blog, Article, Comment'
         print(rules)
         while True:
@@ -160,7 +205,19 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
-                self.ctrl.delete_item(string)
+                fields = string_to_type(string).fields()
+                print('Choose field name: {}'.format(sub(r'\(|\)', '', str(fields))))
+                while True:
+                    attribute = input('>>> Input field name: ')
+                    if attribute in string_to_type(string).fields():
+                        value = input('>>> Input value: ')
+                        self.ctrl.delete_item(string, attribute, value)
+                    elif attribute == 'cancel':
+                        break
+                    else:
+                        print('Invalid attribute')
+            else:
+                print('Invalid command')
 
 
 if __name__ == '__main__':
