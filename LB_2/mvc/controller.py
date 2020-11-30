@@ -1,5 +1,5 @@
 from mvc.local import db_settings
-from mvc.model import User, Blog, Article, Comment
+from mvc.model import User, Blog, Article, Comment, FIELD_TYPES
 from re import sub
 from datetime import datetime, timedelta
 import psycopg2 as psql
@@ -126,50 +126,45 @@ class Controller:
         return data
 
     @staticmethod
-    def input_processing(string: str) -> "int, str":
-        """
-        Функция принимает сторку и преобразовывает ее
-        в тип соотвецтвенно указаниям полсе ':'
-        <значение нужного типа>:<тип данных>
-        """
-        input_string = input(string)
-        if ":" in input_string:
-            string_parts = input_string.split(":")
-            if string_parts[1] == "int":
+    def input_processing(string: str, field_name: str) -> str:
+        while True:
+            input_string = input(string)
+            if FIELD_TYPES[field_name] == int:
                 try:
-                    string_parts = int(string_parts[0])
-                except ValueError:
-                    print("Something went wrong")
-                return string_parts
-            elif string_parts[1] == "str":
-                return string_parts[0]
-            else:
-                print("Something went wrong")
-        else:
-            return input_string
+                    int(input_string)
+                except:
+                    print('Invalid type')
+                    continue
+                return input_string
+            if FIELD_TYPES[field_name] == str:
+                return input_string
 
 
-    def insert_item(self, table_name, data):
+    def insert_item(self, table_name: str, data):
         data_dict = dict()
-        print('You are using formatting input: ')
-        # todo: change fields *_id [*]
         fields_set = string_to_type(table_name).fields()
         for i in range(1, len(fields_set)):
-            data_dict[fields_set[i]] = self.input_processing('>>> Input {}: '.format(fields_set[i]))
+            data_dict[fields_set[i]] = self.input_processing('>>> Input {}: '.format(fields_set[i]), fields_set[i])
         fields = tuple(data_dict.keys())
         values = tuple(data_dict.values())
 
         fields = sub("'", '"', str(fields))
 
-        # TODO: add check for types in db table ['blog_id']
         sql_request = 'INSERT INTO "%(table_name)s" %(fields)s VALUES %(values)s;' % {
             'table_name': table_name,
             'fields': fields,
             'values': str(tuple(data_dict.values()))
         }
 
-        self.__db.execute(sql_request)
+        try:
+            self.__db.execute(sql_request)
+        except Exception as ex:
+            print('Error: [{}]'.format(str(type(ex))[len("<class 'psycopg2.errors."):-len("'>")]))
+            print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
         self.__db_connection.commit()
+
+    def update_item(self):
+        pass
 
     def delete_item(self, name):
         pass
