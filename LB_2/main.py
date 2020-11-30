@@ -1,5 +1,6 @@
 import datetime as date
 from re import sub
+from numpy import fabs
 from mvc.controller import Controller
 from mvc.view import View
 from mvc.model import User, Blog, Article, Comment, FIELD_TYPES
@@ -123,7 +124,23 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
-                self.ctrl.insert_item(string)
+                while True:
+                    input_type = input('Create random row or manual input(random/manual)?\n/insert/ >>> ')
+                    if input_type == 'manual':
+                        self.ctrl.insert_item(string)
+                    elif input_type == 'random':
+                        while True:
+                            number_of_rows = input('>>> Input number of rows:')
+                            try:
+                                number_of_rows = int(number_of_rows)
+                                break
+                            except:
+                                print('Invalid data type')
+                        self.ctrl.insert_random_item(string, fabs(number_of_rows))
+                    elif input_type == 'cancel':
+                        break
+                    else:
+                        print('Invalid option')
 
     def update_menu(self):
         pass
