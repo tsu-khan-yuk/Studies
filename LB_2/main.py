@@ -64,7 +64,7 @@ class MainConsole:
                     if table_name == 'cancel':
                         break
                     elif table_name in {'User', 'Blog', 'Article', 'Comment'}:
-                        self.view.table_view(table_name, self.ctrl)
+                        self.view.table_view(table_name)
                     else:
                         print('Invalid table_name')
             elif string == 'item':
@@ -106,7 +106,7 @@ class MainConsole:
                             ret = input('/get/fields({})/ >>> Input string pattern: '.format(field))
                         conditions.append(ret)
 
-                    self.view.items_view(fields_name, conditions, self.ctrl)
+                    self.view.items_view(fields_name, conditions)
             else:
                 print('Invalid command')
 
@@ -128,7 +128,7 @@ class MainConsole:
                     input_type = input('Create random row or manual input(random/manual)?\n'
                                        '/insert/"%s" >>> ' % string)
                     if input_type == 'manual':
-                        self.ctrl.insert_item(string)
+                        self.view.insert_item_view(string)
                     elif input_type == 'random':
                         while True:
                             number_of_rows = input('>>> Input number of rows:')
@@ -137,7 +137,7 @@ class MainConsole:
                                 break
                             except:
                                 print('Invalid data type')
-                        self.ctrl.insert_random_item(string, fabs(number_of_rows))
+                        self.view.insert_random_items_view(string, fabs(number_of_rows))
                     elif input_type == 'cancel':
                         break
                     else:
@@ -184,7 +184,7 @@ class MainConsole:
                                         except:
                                             print('Invalid type')
                                             continue
-                                    self.ctrl.update_item(table_name, attribute, new_value, key_attribute, key_value)
+                                    self.ctrl.update_items_view(table_name, attribute, new_value, key_attribute, key_value)
                                     execution_flag = False
                     else:
                         print('Invalid field name')
@@ -211,7 +211,7 @@ class MainConsole:
                     attribute = input('>>> Input field name: ')
                     if attribute in string_to_type(string).fields():
                         value = input('>>> Input value: ')
-                        self.ctrl.delete_item(string, attribute, value)
+                        self.ctrl.delete_item_view(string, attribute, value)
                     elif attribute == 'cancel':
                         break
                     else:

@@ -161,7 +161,10 @@ class Controller:
             execution_flag = True
         except Exception as ex:
             print('Error: [{}]'.format(str(type(ex))[len("<class 'psycopg2.errors."):-len("'>")]))
-            print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
+            if 'DETAIL' in ex.pgerror:
+                print('DETAILS: {}'.format(str(ex.pgerror).split('DETAIL:  ')[1]))
+            else:
+                print(ex.pgerror)
         if execution_flag:
             print('Request: Success')
         self.__db_connection.commit()
