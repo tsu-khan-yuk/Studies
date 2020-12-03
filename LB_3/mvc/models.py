@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
+# todo: add def fields()
 
 Base = declarative_base()
 
@@ -12,8 +12,12 @@ class User(Base):
     name = Column(String)
     e_mail = Column(String)
 
+    @staticmethod
+    def fields():
+        return 'user_id', 'name', 'e-mail'
+
     def __repr__(self):
-        return '<User object[%(id)d]: %(name)20s|%(mail)15s>' % {
+        return '<User object[%(id)2d]: %(name)20s|%(mail)15s>' % {
             'id': self.user_id,
             'name': self.name,
             'mail': self.e_mail
@@ -29,7 +33,7 @@ class Blog(Base):
     user = relationship('User')
 
     def __repr__(self):
-        return '<Blog object[%(id)d]: %(name)20s|%(description).20s... |%(fk_id)d>' % {
+        return '<Blog object[%(id)2d]: %(name)20s|%(description).20s... |%(fk_id)d>' % {
             'id': self.blog_id,
             'name': self.name,
             'description': self.description,
@@ -46,7 +50,7 @@ class Article(Base):
     blog = relationship('Blog')
 
     def __repr__(self):
-        return '<Article object[%(id)d]: %(name)30s|%(text).30s... |%(fk_id)d>' % {
+        return '<Article object[%(id)2d]: %(name)30s|%(text).30s... |%(fk_id)d>' % {
             'id': self.article_id,
             'name': self.name,
             'text': self.text,
@@ -62,8 +66,20 @@ class Comment(Base):
     article = relationship('Article')
 
     def __repr__(self):
-        return '<Comment object[%(id)d]: %(text).30s... |%(fk_id)d>' % {
+        return '<Comment object[%(id)2d]: %(text).30s... |%(fk_id)d>' % {
             'id': self.comment_id,
             'text': self.text,
             'fk_id': self.article_id
         }
+
+
+FIELD_TYPES = {
+    'user_id': int,
+    'blog_id': int,
+    'article_id': int,
+    'comment_id': int,
+    'text': str,
+    'description': str,
+    'name': str,
+    'e-mail': str
+}

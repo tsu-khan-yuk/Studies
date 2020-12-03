@@ -1,4 +1,9 @@
-from mvc.controller import Controller
+import datetime as date
+from re import sub
+from numpy import fabs
+from mvc.controller import Controller, string_to_type
+from mvc.view import View
+from mvc.models import FIELD_TYPES
 
 
 class MainConsole:
@@ -206,7 +211,7 @@ class MainConsole:
                     attribute = input('>>> Input field name: ')
                     if attribute in string_to_type(string).fields():
                         value = input('>>> Input value: ')
-                        self.ctrl.delete_item_view(string, attribute, value)
+                        self.view.delete_item_view(string, attribute, value)
                     elif attribute == 'cancel':
                         break
                     else:
