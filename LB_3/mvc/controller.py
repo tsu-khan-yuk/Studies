@@ -28,24 +28,72 @@ class Controller:
     def __del__(self):
         self.__session.close()
 
-    def get_all_table_items(self, table_name: str) -> None:
-        table_data = self.__session.query(string_to_type(table_name)).all()
+    def get_all_table_items(self, **kwargs) -> None:
+        """
+        :param table_name:
+        :return:
+        """
+        table_data = self.__session.query(string_to_type(kwargs['table_name'])).all()
         return table_data
 
-    def find_items(self, fields: list, conditions: list):
+    def find_items(self, **kwargs):
+        """
+        :param fields:
+        :param conditions:
+        :return:
+        """
         pass
 
-    def insert_item(self, table_name: str):
+    def insert_item(self, **kwargs):
+        """
+        :param table_name:
+        :param new_data:
+        :return:
+        """
+        object_type = string_to_type(kwargs['table_name'])
+        object_content = object_type()
+        for attr in kwargs['new_data'].keys():
+            setattr(object_content, attr, kwargs['new_data'][attr])
+        # todo: need to upgrade try/except
+        try:
+             self.__session.add(object_content)
+             self.__session.commit()
+        except:
+            print('Error')
+
+    def insert_random_item(self, **kwargs):
+        """
+        :param table_name:
+        :param rows_amount:
+        :return:
+        """
         pass
 
-    def insert_random_item(self, table_name: str, rows_amount: int):
+    def update_item(self, **kwargs):
+        """
+        :param table_name:
+        :param attribute_to_change:
+        :param new_value:
+        :param key_attribute:
+        :param key_value:
+        :return:
+        """
         pass
 
-    def update_item(self, table_name: str, attribute_to_change: str, new_value: str, key_attribute: str, key_value: str):
-        pass
-
-    def delete_item(self, entity: str, attribute: str, value: str):
-        # todo: add eval(f'self.__session.query(string_to_type({entity})).filter(...)')
-        query = self.__session.query(string_to_type(entity)).filter()
-        filter_group = Column.in_()
-        # query = query.filter(and_(*filter_group))
+    def delete_item(self, **kwargs):
+        """
+        :param entity:
+        :param attribute:
+        :param value:
+        :return:
+        """
+        query = self.__session.query(string_to_type(kwargs['entity'])).filter()
+        var = eval(f'query.filter({kwargs["entity"]}.{kwargs["attribute"]}=={kwargs["value"]})')
+        var = var.all()
+        # todo: need to upgrade try/except
+        try:
+            for item in var:
+                self.__session.delete(item)
+            self.__session.commit()
+        except Exception as ex:
+            print(ex)

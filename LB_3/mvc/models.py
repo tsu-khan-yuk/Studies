@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-# todo: add def fields()
+
 
 Base = declarative_base()
 
@@ -14,9 +14,9 @@ class User(Base):
 
     @staticmethod
     def fields():
-        return 'user_id', 'name', 'e-mail'
+        return 'user_id', 'name', 'e_mail'
 
-    def __repr__(self):
+    def __str__(self):
         return '<User object[%(id)2d]: %(name)20s|%(mail)15s>' % {
             'id': self.user_id,
             'name': self.name,
@@ -81,5 +81,5 @@ FIELD_TYPES = {
     'text': str,
     'description': str,
     'name': str,
-    'e-mail': str
+    'e_mail': str
 }

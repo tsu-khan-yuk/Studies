@@ -64,7 +64,9 @@ class MainConsole:
                     if table_name == 'cancel':
                         break
                     elif table_name in {'User', 'Blog', 'Article', 'Comment'}:
-                        self.view.table_view(table_name)
+                        self.view.table_view(
+                            table_name=table_name
+                        )
                     else:
                         print('Invalid table_name')
             elif string == 'item':
@@ -106,7 +108,10 @@ class MainConsole:
                             ret = input('/get/fields({})/ >>> Input string pattern: '.format(field))
                         conditions.append(ret)
 
-                    self.view.items_view(fields_name, conditions)
+                    self.view.items_view(
+                        fields=fields_name,
+                        conditions=conditions
+                    )
             else:
                 print('Invalid command')
 
@@ -128,7 +133,17 @@ class MainConsole:
                     input_type = input('Create random row or manual input(random/manual)?\n'
                                        '/insert/"%s" >>> ' % string)
                     if input_type == 'manual':
-                        self.view.insert_item_view(string)
+                        new_data = {field: None for field in string_to_type(string).fields()}
+                        new_data.pop(string.lower() + '_id')
+                        for attribute in new_data.keys():
+                            new_data[attribute] = self.input_processing(
+                                string='>>> Input {}: '.format(attribute),
+                                field_name=attribute
+                            )
+                        self.view.insert_item_view(
+                            table_name=string,
+                            new_data=new_data
+                        )
                     elif input_type == 'random':
                         while True:
                             number_of_rows = input('>>> Input number of rows:')
@@ -137,7 +152,10 @@ class MainConsole:
                                 break
                             except:
                                 print('Invalid data type')
-                        self.view.insert_random_items_view(string, fabs(number_of_rows))
+                        self.view.insert_random_items_view(
+                            table_name=string,
+                            rows_amount=fabs(number_of_rows)
+                        )
                     elif input_type == 'cancel':
                         break
                     else:
@@ -184,7 +202,13 @@ class MainConsole:
                                         except:
                                             print('Invalid type')
                                             continue
-                                    self.ctrl.update_items_view(table_name, attribute, new_value, key_attribute, key_value)
+                                    self.view.update_items_view(
+                                        table_name=table_name,
+                                        attribute_to_change=attribute,
+                                        new_value=new_value,
+                                        key_attribute=key_attribute,
+                                        key_value=key_value
+                                    )
                                     execution_flag = False
                     else:
                         print('Invalid field name')
@@ -211,13 +235,31 @@ class MainConsole:
                     attribute = input('>>> Input field name: ')
                     if attribute in string_to_type(string).fields():
                         value = input('>>> Input value: ')
-                        self.view.delete_item_view(string, attribute, value)
+                        self.view.delete_item_view(
+                            entity=string,
+                            attribute=attribute,
+                            value=value
+                        )
                     elif attribute == 'cancel':
                         break
                     else:
                         print('Invalid attribute')
             else:
                 print('Invalid command')
+
+    @staticmethod
+    def input_processing(string: str, field_name: str) -> str:
+        while True:
+            input_string = input(string)
+            if FIELD_TYPES[field_name] == int:
+                try:
+                    int(input_string)
+                except:
+                    print('Invalid type')
+                    continue
+                return input_string
+            if FIELD_TYPES[field_name] == str:
+                return input_string
 
 
 if __name__ == '__main__':
