@@ -7,7 +7,6 @@ from mvc.models import FIELD_TYPES
 
 
 class MainConsole:
-    ctrl = Controller()
     view = View()
 
     def __init__(self):

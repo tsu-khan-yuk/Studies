@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
-from mvc.local import DATABASE_URI
 from sqlalchemy import Column
 from sqlalchemy.orm import sessionmaker
+from mvc.local import DATABASE_URI
 from mvc.models import User, Blog, Article, Comment
 
 
@@ -22,8 +22,12 @@ class Controller:
     __session = None
 
     def __init__(self):
-        Session = sessionmaker(bind=self.__engine)
-        self.__session = Session()
+        try:
+            Session = sessionmaker(bind=self.__engine)
+            self.__session = Session()
+        except Exception as ex:
+            print('DATABASE NOT FOUND:')
+            raise ex
 
     def __del__(self):
         self.__session.close()
@@ -58,8 +62,8 @@ class Controller:
         try:
              self.__session.add(object_content)
              self.__session.commit()
-        except:
-            print('Error')
+        except Exception as ex:
+            print(ex)
 
     def insert_random_item(self, **kwargs):
         """
