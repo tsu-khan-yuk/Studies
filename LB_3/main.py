@@ -1,7 +1,7 @@
 import datetime as date
 from re import sub
 from numpy import fabs
-from mvc.controller import Controller, string_to_type
+from mvc.controller import string_to_type
 from mvc.view import View
 from mvc.models import FIELD_TYPES
 
@@ -93,8 +93,12 @@ class MainConsole:
                         if FIELD_TYPES[field] == int:
                             while True:
                                 try:
-                                    left_limit = int(input('/get/fields({})/ >>> Input left limit: '.format(field)))
-                                    right_limit = int(input('/get/fields({})/ >>> Input right limit: '.format(field)))
+                                    left_limit = int(
+                                        input('/get/fields({})/ >>> Input left limit: '.format(field))
+                                    )
+                                    right_limit = int(
+                                        input('/get/fields({})/ >>> Input right limit: '.format(field))
+                                    )
                                     break
                                 except:
                                     print('Invalid type')
@@ -190,7 +194,7 @@ class MainConsole:
                                     print('Invalid type')
                                     continue
                             print('Choose attribute name: {}'.format(
-                                sub(r'\(|\)', '', str(string_to_type(table_name).fields()))))
+                                sub(r'[)(]', '', str(string_to_type(table_name).fields()))))
                             while execution_flag:
                                 key_attribute = input('>>> Input key attribute to search: ')
                                 if key_attribute in string_to_type(table_name).fields():
@@ -229,11 +233,14 @@ class MainConsole:
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
                 fields = string_to_type(string).fields()
-                print('Choose field name: {}'.format(sub(r'\(|\)', '', str(fields))))
+                print('Choose field name: {}'.format(sub(r'[)(]', '', str(fields))))
                 while True:
                     attribute = input('>>> Input field name: ')
                     if attribute in string_to_type(string).fields():
-                        value = input('>>> Input value: ')
+                        value = self.input_processing(
+                            string='>>> Input value: ',
+                            field_name=attribute
+                        )
                         self.view.delete_item_view(
                             entity=string,
                             attribute=attribute,
