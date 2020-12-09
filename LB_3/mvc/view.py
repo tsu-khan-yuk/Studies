@@ -6,6 +6,9 @@ class View:
 
     def table_view(self, **kwargs):
         data = self.ctrl.get_all_table_items(**kwargs)
+        if data == []:
+            print('Table is empty')
+            return None
         for item in data:
             print(item)
 

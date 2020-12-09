@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column
 from sqlalchemy.orm import sessionmaker
 from mvc.local import DATABASE_URI
 from mvc.models import User, Blog, Article, Comment
+import sqlalchemy.exc as error
 
 
 def string_to_type(model_name: str):
@@ -21,6 +22,9 @@ class Controller:
     __session = None
 
     def __init__(self):
+        self.__set_session()
+
+    def __set_session(self):
         try:
             Session = sessionmaker(bind=self.__engine)
             self.__session = Session()
@@ -57,14 +61,22 @@ class Controller:
         object_content = object_type()
         for attr in kwargs['new_data'].keys():
             setattr(object_content, attr, kwargs['new_data'][attr])
-        # todo: check in view
-        # todo: create new session if crush
+        # todo: add validation for data?
         # todo: need to upgrade try/except
+        #   psycopg2.errors.ForeignKeyViolation sqlalchemy.exc.IntegrityError
+        #   psycopg2.errors.NumericValueOutOfRange sqlalchemy.exc.DataError
         try:
              self.__session.add(object_content)
              self.__session.commit()
+        except error.IntegrityError as ex:
+            print('Int Err')
+            self.__set_session()
+        except error.DataError as ex:
+            print('Data Err')
+            self.__set_session()
         except Exception as ex:
-            print(ex)
+            print(type(ex))
+            self.__set_session()
 
     def insert_random_item(self, **kwargs):
         """
@@ -103,4 +115,5 @@ class Controller:
                 self.__session.delete(item)
             self.__session.commit()
         except Exception as ex:
+            self.__set_session()
             print(ex)

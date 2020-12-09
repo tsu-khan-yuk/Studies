@@ -6,6 +6,18 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 
+FIELD_TYPES = {
+    'user_id': int,
+    'blog_id': int,
+    'article_id': int,
+    'comment_id': int,
+    'text': str,
+    'description': str,
+    'name': str,
+    'e_mail': str
+}
+
+
 class User(Base):
     __tablename__ = 'User'
     user_id = Column(Integer, primary_key=True)
@@ -83,15 +95,3 @@ class Comment(Base):
             'text': self.text,
             'fk_id': self.article_id
         }
-
-
-FIELD_TYPES = {
-    'user_id': int,
-    'blog_id': int,
-    'article_id': int,
-    'comment_id': int,
-    'text': str,
-    'description': str,
-    'name': str,
-    'e_mail': str
-}
