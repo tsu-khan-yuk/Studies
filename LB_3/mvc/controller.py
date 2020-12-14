@@ -62,21 +62,24 @@ class Controller:
         for attr in kwargs['new_data'].keys():
             setattr(object_content, attr, kwargs['new_data'][attr])
         # todo: add validation for data?
-        # todo: need to upgrade try/except
-        #   psycopg2.errors.ForeignKeyViolation sqlalchemy.exc.IntegrityError
-        #   psycopg2.errors.NumericValueOutOfRange sqlalchemy.exc.DataError
         try:
              self.__session.add(object_content)
              self.__session.commit()
+             return str(object_content)
         except error.IntegrityError as ex:
-            print('Int Err')
+            error_detail = str(ex).split('\n')[1]
+            print('STDERR: Integrity Error \n' + error_detail)
             self.__set_session()
         except error.DataError as ex:
-            print('Data Err')
+            error_detail = str(ex).split('\n')[0]
+            error_detail = error_detail[len('(psycopg2.errors.NumericValueOutOfRange) v'):]
+            error_detail = 'DETAIL: V' + error_detail
+            print('STDERR: Data Error: \n' + error_detail)
             self.__set_session()
         except Exception as ex:
-            print(type(ex))
+            print(ex)
             self.__set_session()
+        return None
 
     def insert_random_item(self, **kwargs):
         """
@@ -107,13 +110,15 @@ class Controller:
         query = self.__session.query(string_to_type(kwargs['entity'])).filter()
         query_data = eval(f'query.filter({kwargs["entity"]}.{kwargs["attribute"]}=={kwargs["value"]})')
         query_data = query_data.all()
-        # todo: check in view
-        # todo: create new session if crush
-        # todo: need to upgrade try/except
+
+        if query_data == []:
+            return None
         try:
             for item in query_data:
                 self.__session.delete(item)
             self.__session.commit()
         except Exception as ex:
-            self.__set_session()
             print(ex)
+            self.__set_session()
+            return None
+        return query_data
