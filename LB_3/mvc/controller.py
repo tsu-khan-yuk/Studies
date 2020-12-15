@@ -49,7 +49,28 @@ class Controller:
         :param conditions:
         :return:
         """
-        pass
+        entities = list()
+        attributes = list()
+        for field in kwargs['fields']:
+            for table in ['User', 'Blog', 'Article', 'Comment']:
+                if field in string_to_type(table).fields():
+                    entities.append(table)
+                    attributes.append(field)
+
+        found_data = list()
+        condition_values = dict(zip(fields, conditions))
+        for attribute, entity in zip(attributes, entities):
+            if isinstance(condition_values[attribute], str):
+                query = self.__session.query(string_to_type(entity))
+                query = eval(
+                    f'query.filter({entity}.{attribute}=="{condition_values[attribute]}")'
+                )
+                found_data.append(query)
+            elif isinstance(condition_values[attribute], list):
+                query = self.__session.query(string_to_type(entity))
+                query = eval(
+                    f''
+                )
 
     def insert_item(self, **kwargs):
         """
@@ -61,7 +82,6 @@ class Controller:
         object_content = object_type()
         for attr in kwargs['new_data'].keys():
             setattr(object_content, attr, kwargs['new_data'][attr])
-        # todo: add validation for data?
         try:
              self.__session.add(object_content)
              self.__session.commit()
@@ -98,7 +118,41 @@ class Controller:
         :param key_value:
         :return:
         """
-        pass
+        query_data = self.__session.query(string_to_type(kwargs['table_name'])).filter()
+        query_data = eval(
+            f'query_data.filter({kwargs["table_name"]}.{kwargs["key_attribute"]}=="{kwargs["key_value"]}")'
+        )
+        query_data = query_data.all()
+        update_limit = 1
+
+        if query_data == []:
+            return None
+        elif len(query_data) > 1:
+            while True:
+                answer = input(
+                    '>>> Several options were found. Change (all/first) or'
+                    'choose other key attribute: '
+                )
+                if answer == 'all':
+                    update_limit = len(query_data)
+                    break
+                elif answer == 'first':
+                    update_limit = 1
+                    break
+                else:
+                    print('Invalid answer')
+
+        for index in range(update_limit):
+            eval(
+                f'setattr(query_data[{index}], '
+                f'"{kwargs["attribute_to_change"]}", '
+                f'"{kwargs["new_value"]}")'
+            )
+        try:
+            self.__session.commit()
+        except Exception as err:
+            print(err)
+            self.__set_session()
 
     def delete_item(self, **kwargs):
         """
@@ -108,7 +162,9 @@ class Controller:
         :return:
         """
         query = self.__session.query(string_to_type(kwargs['entity'])).filter()
-        query_data = eval(f'query.filter({kwargs["entity"]}.{kwargs["attribute"]}=={kwargs["value"]})')
+        query_data = eval(
+            f'query.filter({kwargs["entity"]}.{kwargs["attribute"]}=="{kwargs["value"]}")'
+        )
         query_data = query_data.all()
 
         if query_data == []:

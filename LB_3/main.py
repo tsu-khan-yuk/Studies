@@ -4,6 +4,7 @@ from numpy import fabs
 from mvc.controller import string_to_type
 from mvc.view import View
 from mvc.models import FIELD_TYPES
+# todo: compile r'[)(]'
 
 
 class MainConsole:
@@ -183,6 +184,7 @@ class MainConsole:
                 table_name = string
                 execution_flag = True
                 while execution_flag:
+                    print('Choose: {}'.format(sub(r'[)(]', '', str(string_to_type(table_name).fields()))))
                     attribute = input('>>> Input name of attribute to be changed: ')
                     if attribute in string_to_type(string).fields():
                         while execution_flag:
@@ -194,7 +196,8 @@ class MainConsole:
                                     print('Invalid type')
                                     continue
                             print('Choose attribute name: {}'.format(
-                                sub(r'[)(]', '', str(string_to_type(table_name).fields()))))
+                                sub(r'[)(]', '', str(string_to_type(table_name).fields())))
+                            )
                             while execution_flag:
                                 key_attribute = input('>>> Input key attribute to search: ')
                                 if key_attribute in string_to_type(table_name).fields():
@@ -270,4 +273,3 @@ class MainConsole:
 
 if __name__ == '__main__':
     MainConsole()
-
