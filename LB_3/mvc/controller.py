@@ -139,17 +139,22 @@ class Controller:
                 else:
                     print('Invalid answer')
 
+        ret = list()
         for index in range(update_limit):
             eval(
                 f'setattr(query_data[{index}], '
                 f'"{kwargs["attribute_to_change"]}", '
                 f'"{kwargs["new_value"]}")'
             )
+            ret.append(query_data[index])
+
         try:
             self.__session.commit()
+            return ret
         except Exception as err:
             print(err)
             self.__set_session()
+        return None
 
     def delete_item(self, **kwargs):
         """
