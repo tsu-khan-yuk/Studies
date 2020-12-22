@@ -58,19 +58,24 @@ class Controller:
                     attributes.append(field)
 
         found_data = list()
-        condition_values = dict(zip(fields, conditions))
+        condition_values = dict(zip(kwargs['fields'], kwargs['conditions']))
         for attribute, entity in zip(attributes, entities):
             if isinstance(condition_values[attribute], str):
                 query = self.__session.query(string_to_type(entity))
                 query = eval(
                     f'query.filter({entity}.{attribute}=="{condition_values[attribute]}")'
                 )
-                found_data.append(query)
+                found_data += query.all()
             elif isinstance(condition_values[attribute], list):
                 query = self.__session.query(string_to_type(entity))
                 query = eval(
-                    f''
+                    f'query.filter({entity}.{attribute}'
+                    f'.between({condition_values[attribute][0]}, {condition_values[attribute][1]}))'
                 )
+                found_data += query.all()
+        if found_data == []:
+            return None
+        return found_data
 
     def insert_item(self, **kwargs):
         """
@@ -100,14 +105,6 @@ class Controller:
             print(ex)
             self.__set_session()
         return None
-
-    def insert_random_item(self, **kwargs):
-        """
-        :param table_name:
-        :param rows_amount:
-        :return:
-        """
-        pass
 
     def update_item(self, **kwargs):
         """
@@ -166,12 +163,28 @@ class Controller:
             f'query.filter({kwargs["entity"]}.{kwargs["attribute"]}=="{kwargs["value"]}")'
         )
         query_data = query_data.all()
+        delete_limit = 1
 
         if query_data == []:
             return None
+        elif len(query_data) > 1:
+            while True:
+                answer = input(
+                    '>>> Several options were found. Change (all/first) or'
+                    'choose other key attribute: '
+                )
+                if answer == 'all':
+                    delete_limit = len(query_data)
+                    break
+                elif answer == 'first':
+                    delete_limit = 1
+                    break
+                else:
+                    print('Invalid answer')
+
         try:
-            for item in query_data:
-                self.__session.delete(item)
+            for index in range(delete_limit):
+                self.__session.delete(query_data[index])
             self.__session.commit()
         except Exception as ex:
             print(ex)

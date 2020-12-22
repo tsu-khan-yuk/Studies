@@ -13,16 +13,25 @@ class View:
             print(item)
 
     def items_view(self, **kwargs):
-        self.ctrl.find_items(**kwargs)
+        data = self.ctrl.find_items(**kwargs)
+        
+        for i in data:
+            print(i)
 
     def delete_item_view(self, **kwargs):
-        self.ctrl.delete_item(**kwargs)
+        data = self.ctrl.delete_item(**kwargs)
+        if data is None:
+            print('Not deleted')
+            return None
+        print('Deleted data:')
+        for i in data:
+            print(i)
 
     def update_items_view(self, **kwargs):
-        self.ctrl.update_item(**kwargs)
-
-    def insert_random_items_view(self, **kwargs):
-        self.ctrl.insert_random_item(**kwargs)
+        data = self.ctrl.update_item(**kwargs)
+        for i in data:
+            print(i)
 
     def insert_item_view(self, **kwargs):
-        self.ctrl.insert_item(**kwargs)
+        data = self.ctrl.insert_item(**kwargs)
+        print(f'Created data:\n' + str(data))

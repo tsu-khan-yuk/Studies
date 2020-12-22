@@ -133,37 +133,17 @@ class MainConsole:
             elif string == 'help':
                 print(rules)
             elif string in {'User', 'Blog', 'Article', 'Comment'}:
-                while True:
-                    input_type = input('Create random row or manual input(random/manual)?\n'
-                                       '/insert/"%s" >>> ' % string)
-                    if input_type == 'manual':
-                        new_data = {field: None for field in string_to_type(string).fields()}
-                        new_data.pop(string.lower() + '_id')
-                        for attribute in new_data.keys():
-                            new_data[attribute] = self.input_processing(
-                                string='>>> Input {}: '.format(attribute),
-                                field_name=attribute
-                            )
-                        self.view.insert_item_view(
-                            table_name=string,
-                            new_data=new_data
-                        )
-                    elif input_type == 'random':
-                        while True:
-                            number_of_rows = input('>>> Input number of rows:')
-                            try:
-                                number_of_rows = int(number_of_rows)
-                                break
-                            except:
-                                print('Invalid data type')
-                        self.view.insert_random_items_view(
-                            table_name=string,
-                            rows_amount=fabs(number_of_rows)
-                        )
-                    elif input_type == 'cancel':
-                        break
-                    else:
-                        print('Invalid option')
+                new_data = {field: None for field in string_to_type(string).fields()}
+                new_data.pop(string.lower() + '_id')
+                for attribute in new_data.keys():
+                    new_data[attribute] = self.input_processing(
+                        string='>>> Input {}: '.format(attribute),
+                        field_name=attribute
+                    )
+                self.view.insert_item_view(
+                    table_name=string,
+                    new_data=new_data
+                )
             else:
                 print('Invalid command')
 
